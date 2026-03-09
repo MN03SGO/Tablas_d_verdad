@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página web con mini juegos</title>
+    <meta
+      name="description"
+      content="Landing page con sección Acerca de y Minijuegos con tablas de verdad."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./theme.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true"></div>
+    <header class="container header">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">⊻</div>
+        <div class="brand__text">
+          <div class="brand__title">Página web con mini juegos</div>
+          <div class="brand__subtitle">Tablas de verdad · Lógica proposicional</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="btn btn--primary" href="./logic-game.html">Tablas de verdad</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="hero card reveal is-visible">
+        <div class="hero__left">
+          <h1 class="hero__title">Aprende practicando con mini juegos</h1>
+          <p class="hero__desc">
+            Explora ejercicios interactivos de <b>tablas de verdad</b> (3 retos) y revisa
+            una sección <b>Acerca de</b> con un formato tipo acordeón como tu ejemplo.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="./logic-game.html">Jugar Tablas de verdad</a>
+          </div>
+        </div>
+
+        <div class="hero__right">
+          <div class="preview">
+            <div class="preview__top">
+              <span class="pill">3 Truth Tables</span>
+              <span class="pill pill--muted">Auto-check</span>
+            </div>
+            <div class="preview__box">
+              <div class="preview__line"><span class="dot"></span> p ∧ q</div>
+              <div class="preview__line"><span class="dot"></span> p ∨ q</div>
+              <div class="preview__line"><span class="dot"></span> p ⊕ q</div>
+              <div class="preview__hint">Completa V/F y valida en un click.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="acerca" class="card card--acerca reveal is-visible" style="margin-top: 14px"
+               data-collapsible data-open="false" data-collapsible-class="is-closed">
+        <div class="acerca-header">
+          <h2 class="page-head__title" style="margin: 0">Acerca de</h2>
+          <button type="button" class="acerca-toggle" id="acerca-toggle"
+                  data-collapsible-trigger aria-expanded="false" aria-controls="acerca-content">
+            <span class="acerca-toggle__icon" aria-hidden="true">+</span>
+          </button>
+        </div>
+        <div id="acerca-content" class="acerca-content is-closed"
+             data-collapsible-panel aria-hidden="true">
+          <div class="accordion" data-accordion="independent" aria-label="Acerca de">
+
+            <div class="acc-item" data-collapsible data-open="false">
+              <button class="acc-btn" type="button"
+                      data-collapsible-trigger aria-expanded="false">
+                <span>¿De qué trata este proyecto?</span>
+                <span class="acc-icon" aria-hidden="true">+</span>
+              </button>
+              <div class="acc-panel" data-collapsible-panel>
+                Es una landing page con mini juegos de lógica proposicional, enfocados en
+                practicar tablas de verdad con retroalimentación inmediata.
+              </div>
+            </div>
+
+            <div class="acc-item" data-collapsible data-open="false">
+              <button class="acc-btn" type="button"
+                      data-collapsible-trigger aria-expanded="false">
+                <span>¿Cómo se juega Tablas de verdad?</span>
+                <span class="acc-icon" aria-hidden="true">+</span>
+              </button>
+              <div class="acc-panel" data-collapsible-panel>
+                Entra a <b>Tablas de verdad</b>, completa la columna resultado arrastrando
+                <b>V</b> o <b>F</b>, presiona <b>Validar tabla</b> y luego elige la
+                clasificación correcta (tautología, contradicción o contingencia).
+              </div>
+            </div>
+
+            <div class="acc-item" data-collapsible data-open="false">
+              <button class="acc-btn" type="button"
+                      data-collapsible-trigger aria-expanded="false">
+                <span>¿Qué valores acepta el verificador?</span>
+                <span class="acc-icon" aria-hidden="true">+</span>
+              </button>
+              <div class="acc-panel" data-collapsible-panel>
+                Puedes escribir <b>V</b> / <b>F</b> (recomendado). También acepta
+                <b>1</b>/<b>0</b> o <b>T</b>/<b>F</b>.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section class="grid reveal is-visible" style="margin-top: 12px">
+        <div class="card card--link">
+          <div class="card__title">Idea 1: Reto 4</div>
+          <div class="card__desc">Agregar implicación (p → q) o bicondicional (p ↔ q).</div>
+          <div class="card__cta">Pendiente</div>
+        </div>
+        <div class="card card--link">
+          <div class="card__title">Idea 2: Puntaje</div>
+          <div class="card__desc">Guardar progreso/puntaje en el navegador.</div>
+          <div class="card__cta">Pendiente</div>
+        </div>
+        <div class="card card--link">
+          <div class="card__title">Idea 3: Explicación</div>
+          <div class="card__desc">Mostrar por qué cada fila da V o F.</div>
+          <div class="card__cta">Pendiente</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container footer">
+      <div class="footer__left">
+        <div class="footer__title">GRUPO: 001</div>
+        <div class="footer__text" id="footer-meta">Facultad de Ingenieria en Sistemas</div>
+        <div class="footer_integrantes">INTEGRANTES</div>
+        <div class="integrantes">
+          <p>
+            Carlos Andres <br>
+            Anthony Sigaran <br>
+            Jorge Ernesto <br>
+            Blanca Consuelo <br>
+            Karla Alvarado <br>
+            Alex
+          </p>
+        </div>
+      </div>
+      <div class="footer__right">
+        <a class="footer__link" href="./logic-game.html">Tablas de verdad</a>
+      </div>
+    </footer>
+
+    <script src="./site.js" defer></script>
+  </body>
+</html>

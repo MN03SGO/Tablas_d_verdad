@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tablas de verdad</title>
+    <meta name="description" content="Juego interactivo de tablas de verdad: completa con bloques arrastrables y clasifica proposiciones." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./theme.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./logic-game.css" />
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true"></div>
+    <header class="container header">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">⊻</div>
+        <div class="brand__text">
+          <div class="brand__title">Tablas de verdad</div>
+          <div class="brand__subtitle">Arrastra y suelta · Clasificación</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <div class="game-score" aria-live="polite">
+          <span class="game-score__label">Puntos</span>
+          <span class="game-score__value" id="game-score">0</span>
+        </div>
+        <div class="game-level-badge" aria-live="polite">
+          Nivel <span id="game-level-num">1</span> / <span id="game-level-total">—</span>
+        </div>
+        <div class="game-progress-badge" aria-label="Progreso" aria-live="polite">
+          <div class="game-progress-badge__bar">
+            <div class="game-progress-badge__fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+          <span class="game-progress-badge__text" id="progress-text">0 completados</span>
+        </div>
+        <a class="btn btn--ghost" href="./index.html">Inicio</a>
+        <a class="btn btn--primary" href="./logic-game.html" aria-current="page">Tablas de verdad</a>
+      </nav>
+    </header>
+
+    <main class="container logic-game-main">
+      <!-- Instrucciones y tutorial -->
+      <section class="card logic-game-card reveal is-visible" aria-label="Instrucciones"
+               data-collapsible data-open="false"
+               data-collapsible-class="logic-instructions-panel--closed">
+        <button type="button" class="logic-instructions-toggle" id="instructions-toggle"
+                data-collapsible-trigger aria-expanded="false" aria-controls="instructions-panel">
+          <span class="logic-instructions-toggle__title">📖 Instrucciones y tutorial</span>
+          <span class="logic-instructions-toggle__icon" aria-hidden="true">+</span>
+        </button>
+        <div class="logic-instructions-panel logic-instructions-panel--closed" id="instructions-panel"
+             data-collapsible-panel aria-hidden="true">
+          <p><strong>Objetivo:</strong> En cada nivel verás una expresión lógica. Completa la tabla de verdad arrastrando <strong>V</strong> (verdadero) o <strong>F</strong> (falso) a la columna resultado. Luego elige la <strong>clasificación</strong> correcta: Tautología (siempre verdadera), Contradicción (siempre falsa) o Contingencia (a veces verdadera, a veces falsa).</p>
+          <p><strong>Bloques:</strong> Usa la paleta para arrastrar V, F, 1 o 0 a la tabla. Las columnas de variables (P, Q, R) se rellenan solas.</p>
+          <p><strong>Pistas:</strong> Pulsa «Pista» si necesitas ayuda. Los puntos y el progreso se guardan.</p>
+        </div>
+      </section>
+
+      <!-- Enunciado del nivel (estética normal) -->
+      <section class="card logic-game-card reveal is-visible" aria-label="Enunciado del nivel">
+        <h2 class="logic-problem__title">Enunciado del nivel</h2>
+        <p class="logic-problem__statement" id="level-statement">Pulsa «Generar enunciado» para obtener un reto aleatorio.</p>
+        <p class="logic-problem__meta" id="level-meta"></p>
+        <div class="logic-problem__actions">
+          <button type="button" class="btn btn--primary" id="btn-generate-statement">Generar enunciado</button>
+        </div>
+      </section>
+
+      <!-- Paleta de bloques -->
+      <section class="card logic-game-card logic-palette-section" aria-label="Bloques arrastrables">
+        <h3 class="logic-palette__title">Arrastra bloques a la columna resultado</h3>
+        <div class="logic-palette">
+          <div class="logic-palette-group" data-palette-group="values">
+            <span class="logic-palette-group__label">Valores de verdad</span>
+            <div class="logic-blocks" id="palette-values">
+              <span class="logic-block logic-block--value" draggable="true" data-block-type="value" data-block-value="V">V</span>
+              <span class="logic-block logic-block--value" draggable="true" data-block-type="value" data-block-value="F">F</span>
+              <span class="logic-block logic-block--value" draggable="true" data-block-type="value" data-block-value="1">1</span>
+              <span class="logic-block logic-block--value" draggable="true" data-block-type="value" data-block-value="0">0</span>
+            </div>
+          </div>
+          <div class="logic-palette-group" data-palette-group="operators">
+            <span class="logic-palette-group__label">Operadores (referencia)</span>
+            <div class="logic-blocks logic-blocks--ref">
+              <span class="logic-block logic-block--op" title="Y">∧</span>
+              <span class="logic-block logic-block--op" title="O">∨</span>
+              <span class="logic-block logic-block--op" title="No">¬</span>
+              <span class="logic-block logic-block--op" title="XOR">⊕</span>
+              <span class="logic-block logic-block--op" title="NAND">⊼</span>
+              <span class="logic-block logic-block--op" title="NOR">⊽</span>
+              <span class="logic-block logic-block--op" title="Implicación">→</span>
+              <span class="logic-block logic-block--op" title="Bicondicional">↔</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tabla de verdad -->
+      <section class="card logic-game-card logic-table-section" aria-label="Tabla de verdad">
+        <div class="logic-table-toolbar">
+          <button type="button" class="btn btn--primary" id="btn-validate-table">Validar tabla</button>
+          <button type="button" class="btn btn--ghost" id="btn-hint">Pista</button>
+          <button type="button" class="btn btn--ghost" id="btn-reset-cells">Vaciar celdas</button>
+        </div>
+        <div class="table-wrap logic-table-wrap">
+          <table class="truth logic-truth-table" id="truth-table" aria-label="Tabla de verdad">
+            <thead id="truth-thead">
+              <tr><th>#</th><th>P</th><th>Q</th><th>Resultado</th></tr>
+            </thead>
+            <tbody id="truth-tbody"></tbody>
+          </table>
+        </div>
+        <div class="logic-table-status" id="table-status" aria-live="polite">Arrastra V o F a cada celda de resultado y pulsa Validar.</div>
+      </section>
+
+      <!-- Clasificación -->
+      <section class="card logic-game-card logic-classify-section" aria-label="Clasificación">
+        <h3 class="logic-classify__title">Clasificación</h3>
+        <p class="logic-classify__desc">Valida la tabla correctamente para habilitar la clasificación:</p>
+        <div class="logic-classify-options" id="classify-options">
+          <button type="button" class="logic-classify-btn" data-classify="tautology" id="btn-classify-tautology" disabled>Tautología (siempre verdadera)</button>
+          <button type="button" class="logic-classify-btn" data-classify="contradiction" id="btn-classify-contradiction" disabled>Contradicción (siempre falsa)</button>
+          <button type="button" class="logic-classify-btn" data-classify="contingency" id="btn-classify-contingency" disabled>Contingencia (a veces V, a veces F)</button>
+        </div>
+        <div class="logic-classify-status" id="classify-status" aria-live="polite"></div>
+        <div class="logic-achievements-strip" id="achievements-list"></div>
+      </section>
+    </main>
+
+    <footer class="container footer">
+      <div class="footer__left">
+        <div class="footer__title">Tablas de verdad</div>
+        <div class="footer__text" id="footer-meta">Tablas de verdad · Equivalencias lógicas</div>
+      </div>
+      <div class="footer__right">
+        <a class="footer__link" href="./index.html">Inicio</a>
+        <a class="footer__link" href="./logic-game.html">Tablas de verdad</a>
+      </div>
+    </footer>
+
+    <script src="./site.js" defer></script>
+    <script src="./logic-game.js" defer></script>
+    <script>
+      (function() {
+        var ENUNCIADOS = [
+          { statement: "P", vars: 1 },
+          { statement: "P ∧ Q", vars: 2 },
+          { statement: "P ∨ Q", vars: 2 },
+          { statement: "¬P", vars: 1 },
+          { statement: "P ⊕ Q", vars: 2 },
+          { statement: "P → Q", vars: 2 },
+          { statement: "P ↔ Q", vars: 2 },
+          { statement: "¬(P ∧ Q)", vars: 2 },
+          { statement: "¬(P ∨ Q)", vars: 2 },
+          { statement: "P ∨ ¬P", vars: 1 },
+          { statement: "P ∧ ¬P", vars: 1 },
+          { statement: "(P → Q) ∧ (Q → P)", vars: 2 },
+          { statement: "(P ∧ Q) ∨ R", vars: 3 }
+        ];
+        function getRows(n) {
+          var vars = ["p","q","r","s"].slice(0, n);
+          var len = Math.pow(2, n);
+          var out = [];
+          for (var i = 0; i < len; i++) {
+            var row = {};
+            for (var v = 0; v < n; v++) row[vars[v]] = ((i >> (n - 1 - v)) & 1) === 1;
+            out.push(row);
+          }
+          return out;
+        }
+        function vf(b) { return b ? "V" : "F"; }
+        function generar() {
+          var i = Math.floor(Math.random() * ENUNCIADOS.length);
+          var level = ENUNCIADOS[i];
+          window.__levelIndex = i;
+          var st = document.getElementById("level-statement");
+          var meta = document.getElementById("level-meta");
+          var thead = document.getElementById("truth-thead");
+          var tbody = document.getElementById("truth-tbody");
+          var status = document.getElementById("table-status");
+          if (st) st.textContent = level.statement;
+          if (meta) meta.textContent = "Variables: " + level.vars + ". Completa la columna resultado y clasifica.";
+          if (thead) {
+            var vars = ["P","Q","R","S"].slice(0, level.vars);
+            thead.innerHTML = "<tr><th>#</th>" + vars.map(function(v){ return "<th>"+v+"</th>"; }).join("") + "<th>Resultado (" + level.statement + ")</th></tr>";
+          }
+          if (tbody) {
+            var rows = getRows(level.vars);
+            var vars = ["p","q","r","s"].slice(0, level.vars);
+            tbody.innerHTML = rows.map(function(r, idx) {
+              return "<tr><td>" + (idx+1) + "</td>" + vars.map(function(v){ return "<td>" + vf(r[v]) + "</td>"; }).join("") + '<td class="logic-drop-cell" data-row-idx="' + idx + '" data-value="" droppable="true">—</td></tr>';
+            }).join("");
+          }
+          if (status) status.textContent = "Arrastra V o F a cada celda de resultado y pulsa Validar.";
+        }
+        var btn = document.getElementById("btn-generate-statement");
+        if (btn) btn.addEventListener("click", generar);
+      })();
+    </script>
+  </body>
+</html>

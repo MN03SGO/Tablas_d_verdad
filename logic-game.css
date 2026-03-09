@@ -1,0 +1,600 @@
+/* Logic Puzzle Game - Truth Tables
+   Color coding: operators, values, drop zones, feedback */
+
+.logic-game-main {
+  padding-bottom: 2rem;
+}
+
+.logic-game-card {
+  margin-top: 14px;
+  padding: 18px 20px;
+}
+
+/* Instructions */
+.logic-instructions-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+
+.logic-instructions-toggle:hover {
+  color: var(--primary);
+}
+
+.logic-instructions-toggle__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.04);
+  transition: transform 0.2s ease;
+}
+
+.logic-instructions-toggle[aria-expanded="true"] .logic-instructions-toggle__icon {
+  transform: rotate(45deg);
+  background: rgba(121, 166, 255, 0.14);
+}
+
+/* Panel de instrucciones con animación de apertura/cierre */
+.logic-instructions-panel {
+  padding: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 14px;
+  max-height: 600px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.25s ease;
+}
+
+.logic-instructions-panel.logic-instructions-panel--closed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+.logic-instructions-panel p {
+  margin: 0 0 10px;
+}
+
+.logic-instructions-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.logic-problem__title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.logic-problem__statement {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: clamp(18px, 2.2vw, 24px);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.logic-problem__meta {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--muted-2);
+}
+
+.logic-problem__actions {
+  margin-top: 14px;
+}
+
+.logic-table-placeholder {
+  padding: 20px 16px !important;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Palette: draggable blocks */
+.logic-palette-section {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.02));
+}
+
+.logic-palette__title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.logic-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.logic-palette-group__label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-2);
+  margin-bottom: 8px;
+}
+
+.logic-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.logic-blocks--ref {
+  opacity: 0.85;
+}
+
+/* Block styles: values (V/F/1/0) = draggable, operators = reference only */
+.logic-block {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 16px;
+  user-select: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.logic-block--value {
+  border: 2px solid rgba(121, 166, 255, 0.4);
+  background: linear-gradient(135deg, rgba(121, 166, 255, 0.2), rgba(163, 123, 255, 0.2));
+  color: #e0e8ff;
+  cursor: grab;
+  touch-action: none;
+}
+
+.logic-block--value:hover {
+  transform: scale(1.05);
+  border-color: rgba(121, 166, 255, 0.7);
+  box-shadow: 0 4px 16px rgba(121, 166, 255, 0.25);
+}
+
+.logic-block--value:active,
+.logic-block--value.logic-block--dragging {
+  cursor: grabbing;
+  opacity: 0.9;
+}
+
+.logic-block--op {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: var(--muted-2);
+  font-size: 13px;
+  cursor: default;
+  opacity: 0.7;
+  padding: 6px 10px;
+  min-width: 36px;
+  transition: none;
+  pointer-events: none;
+}
+
+/* Table area */
+.logic-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.logic-table-wrap {
+  margin-top: 0;
+}
+
+.logic-truth-table {
+  min-width: 320px;
+}
+
+.logic-truth-table th,
+.logic-truth-table td {
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+.logic-truth-table .logic-drop-cell {
+  min-width: 72px;
+  min-height: 48px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.logic-drop-cell:hover,
+.logic-drop-cell.logic-drop-cell--over {
+  background: rgba(121, 166, 255, 0.08);
+  border-color: rgba(121, 166, 255, 0.35);
+}
+
+.logic-drop-cell[data-value=""]::before {
+  content: "—";
+  color: var(--muted-2);
+  font-weight: 600;
+}
+
+.logic-drop-cell.cell-ok {
+  border-style: solid;
+  border-color: rgba(74, 222, 128, 0.5);
+  background: rgba(74, 222, 128, 0.08);
+  color: var(--good);
+}
+
+.logic-drop-cell.cell-bad {
+  border-style: solid;
+  border-color: rgba(251, 113, 133, 0.5);
+  background: rgba(251, 113, 133, 0.08);
+  color: var(--bad);
+}
+
+.logic-table-status {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.logic-table-status.status--good {
+  color: var(--good);
+}
+
+.logic-table-status.status--bad {
+  color: var(--bad);
+}
+
+.logic-table-status.status--warn {
+  color: var(--warn);
+}
+
+/* Classification */
+.logic-classify__title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.logic-classify__desc {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.logic-classify-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.logic-classify-btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.logic-classify-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.logic-classify-btn[data-classify="tautology"]:hover {
+  border-color: rgba(74, 222, 128, 0.4);
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.logic-classify-btn[data-classify="contradiction"]:hover {
+  border-color: rgba(251, 113, 133, 0.4);
+  background: rgba(251, 113, 133, 0.08);
+}
+
+.logic-classify-btn[data-classify="contingency"]:hover {
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.logic-classify-btn.logic-classify-btn--correct {
+  border-color: var(--good);
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--good);
+}
+
+.logic-classify-btn.logic-classify-btn--wrong {
+  border-color: var(--bad);
+  background: rgba(251, 113, 133, 0.15);
+  color: var(--bad);
+}
+
+.logic-classify-status {
+  margin-top: 12px;
+  font-size: 14px;
+  min-height: 1.4em;
+}
+
+.logic-classify-status.status--good {
+  color: var(--good);
+}
+
+.logic-classify-status.status--bad {
+  color: var(--bad);
+}
+
+.logic-classify-status.status--warn {
+  color: var(--warn);
+}
+
+/* Progress & achievements */
+.logic-progress__title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.logic-progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.logic-progress-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+  transition: width 0.35s ease;
+}
+
+.logic-progress-text {
+  margin: 8px 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.logic-achievements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.logic-achievement {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--muted);
+}
+
+.logic-achievement.logic-achievement--unlocked {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.35);
+  color: var(--good);
+}
+
+/* Disabled classification buttons */
+.logic-classify-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
+
+/* Header progress badge */
+.game-progress-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 110px;
+}
+
+.game-progress-badge__bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.game-progress-badge__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+  transition: width 0.35s ease;
+}
+
+.game-progress-badge__text {
+  font-size: 11px;
+  color: var(--muted-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Achievements strip (compact, below classify section) */
+.logic-achievements-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0 4px;
+}
+
+/* Header score/level */
+.game-score,
+.game-level-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.game-score__label {
+  color: var(--muted-2);
+}
+
+.game-score__value {
+  color: var(--primary);
+}
+
+.game-level-badge {
+  color: var(--muted);
+}
+
+/* Responsive */
+
+/* Tablet / large phone */
+@media (max-width: 720px) {
+  .logic-classify-options {
+    flex-direction: column;
+  }
+
+  .logic-classify-btn {
+    width: 100%;
+  }
+
+  .header .nav {
+    flex-wrap: wrap;
+  }
+
+  .game-score,
+  .game-level-badge {
+    order: -1;
+    width: 100%;
+  }
+}
+
+/* Phone — fix header metric badges so they share one row */
+@media (max-width: 600px) {
+  /* Override the width: 100% set at 720px — let badges shrink to content */
+  .game-score,
+  .game-level-badge {
+    width: auto;
+    flex: 0 0 auto;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  /* Progress badge fills the remaining space on the same row,
+     pushing nav buttons to wrap onto their own second row */
+  .game-progress-badge {
+    flex: 1 1 80px;
+    min-width: 0;
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .game-progress-badge__text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Instruction toggle — compact on phone */
+  .logic-instructions-toggle {
+    padding: 10px 0;
+  }
+}
+
+/* Phone */
+@media (max-width: 540px) {
+  .logic-game-card {
+    padding: 14px;
+  }
+
+  .logic-palette {
+    gap: 10px;
+  }
+
+  .logic-blocks {
+    gap: 8px;
+  }
+
+  .logic-block {
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  /* Toolbar: Validar | Pista | Vaciar – let them wrap evenly */
+  .logic-table-toolbar {
+    gap: 8px;
+  }
+
+  .logic-table-toolbar .btn {
+    flex: 1;
+    justify-content: center;
+    font-size: 13px;
+    padding: 9px 8px;
+  }
+
+  .logic-drop-cell {
+    min-width: 52px;
+    font-size: 15px;
+  }
+
+  .logic-classify-btn {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
+
+/* Small phone */
+@media (max-width: 420px) {
+  .logic-problem__statement {
+    font-size: clamp(16px, 4.5vw, 22px);
+  }
+
+  .logic-palette-group__label {
+    font-size: 10px;
+  }
+
+  .logic-truth-table th,
+  .logic-truth-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .logic-instructions-toggle {
+    font-size: 14px;
+  }
+}
