@@ -893,7 +893,8 @@ select option {
 }
 
 .footer__text {
-  margin-top: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   color: var(--muted);
   font-size: 14px;
 }
@@ -929,7 +930,7 @@ select option {
 }
 
 .integrantes p {
-  margin: 0;
+  margin-top: 10px;
 }
 
 /* ── Responsive ─────────────────────────────────────────────────── */
