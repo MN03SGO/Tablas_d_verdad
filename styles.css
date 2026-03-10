@@ -995,3 +995,13 @@ select option {
   .truth td:first-child,
   .truth th:first-child { padding-left: 10px; }
 }
+
+/* Ultra-small phone (≤ 360px) */
+@media (max-width: 360px) {
+  .container        { width: calc(100% - 16px); }
+  .btn              { padding: 9px 12px; font-size: 13px; }
+  .acc-btn          { font-size: 14px; padding: 14px; }
+  .page-head        { flex-direction: column; }
+  .page-head__actions { width: 100%; }
+  .page-head__actions .btn { width: 100%; justify-content: center; }
+}

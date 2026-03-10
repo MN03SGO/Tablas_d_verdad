@@ -250,6 +250,54 @@
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--base); }
     ::-webkit-scrollbar-thumb { background: var(--surface1); border-radius: 3px; }
+
+    /* ── Responsive layout ── */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+    }
+
+    @media (max-width: 640px) {
+      .footer-inner { grid-template-columns: 1fr; gap: 1.25rem; }
+      .footer-inner > div:last-child { display: none; }
+
+      /* Navbar: stack brand + button on very small screens */
+      .navbar > div { flex-wrap: wrap; gap: 8px 12px; }
+      .navbar > div .flex.items-center.gap-3 { flex: 1 1 100%; }
+      .navbar > div nav { width: 100%; justify-content: flex-end; }
+
+      /* Playground: wrap toggles so they don't overflow */
+      .playground-toggles { flex-wrap: wrap !important; gap: 1rem !important; }
+
+      /* Expression row: button beneath input on very small screens */
+      .expr-row { flex-wrap: wrap !important; }
+      .expr-row .btn-generate { width: 100%; }
+    }
+
+    @media (max-width: 420px) {
+      .footer-inner { padding: 1.75rem 1rem; }
+      .hero-grid { gap: 1.25rem; }
+    }
+
+    /* ── Main content padding ── */
+    .main-content { padding: 3.5rem 1.5rem; }
+    @media (max-width: 640px) { .main-content { padding: 2rem 1rem; gap: 3rem; } }
+    @media (max-width: 420px) { .main-content { padding: 1.5rem 0.75rem; gap: 2.5rem; } }
   </style>
 </head>
 <body class="relative">
@@ -260,7 +308,7 @@
 
     <!-- ══════════════════ NAVBAR ══════════════════ -->
     <header class="navbar">
-      <div style="max-width:1100px" class="mx-auto px-6 py-4 flex items-center justify-between">
+      <div style="max-width:1100px" class="mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-x-4 gap-y-2">
         <div class="flex items-center gap-3">
           <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;">⊻</span>
           <div>
@@ -277,10 +325,10 @@
       </div>
     </header>
 
-    <main style="max-width:1100px;margin:0 auto;padding:3.5rem 1.5rem;display:flex;flex-direction:column;gap:5rem;">
+    <main class="main-content" style="max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:5rem;">
 
       <!-- ══════════════════ HERO ══════════════════ -->
-      <section class="fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;">
+      <section class="fade-up hero-grid">
         <div>
           <div class="badge badge-mauve" style="margin-bottom:1.25rem;">🎮 Minijuego de Lógica Proposicional</div>
           <h1 style="font-size:clamp(2rem,4vw,2.9rem);font-weight:800;color:var(--text);line-height:1.15;margin-bottom:1.25rem;">
@@ -298,7 +346,7 @@
           </p>
           <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem;">
             <a href="./logic-game.html" class="btn-primary">▶ Comenzar a jugar</a>
-            <a href="#generador" class="btn-secondary"> Generador de tablas</a>
+            <a href="#generador" class="btn-secondary">🧪 Generador de tablas</a>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
             <span class="badge badge-blue">3 Retos interactivos</span>
@@ -314,7 +362,7 @@
             <span class="badge badge-green">● Live</span>
           </div>
 
-          <div style="display:flex;gap:2rem;margin-bottom:1.5rem;align-items:flex-end;">
+          <div class="playground-toggles" style="display:flex;gap:2rem;margin-bottom:1.5rem;align-items:flex-end;">
             <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;">
               <span style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--mauve);">P</span>
               <input type="checkbox" class="toggle" id="toggleP" checked />
@@ -352,7 +400,7 @@
               <span class="symbol">¬p</span>
               <div>
                 <div style="font-weight:700;color:var(--text);font-size:.9rem;">Negación</div>
-                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">NO · !</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">NOT · !</div>
               </div>
             </div>
             <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Invierte el valor de la proposición.</p>
@@ -368,7 +416,7 @@
               <span class="symbol">p∧q</span>
               <div>
                 <div style="font-weight:700;color:var(--text);font-size:.9rem;">Conjunción</div>
-                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">Y · &&</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">AND · &&</div>
               </div>
             </div>
             <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Verdadero solo cuando <strong>ambas</strong> son verdaderas.</p>
@@ -561,7 +609,7 @@
             <button class="expr-chip" onclick="setExpr('P IFF Q')">P IFF Q</button>
           </div>
 
-          <div style="display:flex;gap:.75rem;margin-bottom:.75rem;">
+          <div class="expr-row" style="display:flex;gap:.75rem;margin-bottom:.75rem;">
             <input type="text" class="expr-input" id="exprInput"
                    placeholder="Ej: P AND Q  |  NOT P OR Q  |  P IMPLIES Q"
                    value="P AND Q"
@@ -627,7 +675,7 @@
 
     <!-- ══════════════════ FOOTER ══════════════════ -->
     <footer style="border-top:1px solid rgba(49,50,68,.8);margin-top:2rem;">
-      <div style="max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:start;">
+        <div class="footer-inner">
 
         <div style="display:flex;flex-direction:column;gap:1.25rem;">
           <!-- Brand -->

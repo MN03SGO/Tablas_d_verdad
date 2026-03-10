@@ -2,6 +2,7 @@
    Color coding: operators, values, drop zones, feedback */
 
 .logic-game-main {
+  padding-top: 1rem;
   padding-bottom: 2rem;
 }
 
@@ -555,6 +556,14 @@
     font-size: 15px;
   }
 
+  /* Operator buttons — match value block size */
+  .logic-block--op-btn {
+    padding: 10px 12px;
+    font-size: 15px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
   /* Toolbar: Validar | Pista | Vaciar – let them wrap evenly */
   .logic-table-toolbar {
     gap: 8px;
@@ -576,6 +585,12 @@
     padding: 12px 14px;
     font-size: 14px;
   }
+
+  /* Modal: reduce padding on small screens */
+  .col-modal-box {
+    padding: 1.1rem;
+    gap: 0.65rem;
+  }
 }
 
 /* Small phone */
@@ -596,6 +611,32 @@
 
   .logic-instructions-toggle {
     font-size: 14px;
+  }
+
+  /* Modal — ultra-compact */
+  .col-modal-box {
+    padding: 1rem 0.85rem;
+  }
+  .col-modal-actions {
+    flex-wrap: wrap;
+  }
+  .col-modal-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Operator buttons — ultra-compact */
+  .logic-block--op-btn {
+    padding: 8px 10px;
+    font-size: 14px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  /* Drop cell — tighter */
+  .logic-drop-cell {
+    min-width: 44px;
+    min-height: 40px;
   }
 }
 
