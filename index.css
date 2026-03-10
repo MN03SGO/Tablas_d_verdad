@@ -1,0 +1,297 @@
+/* ================================================================
+   index.css — Styles for the Logic Engine landing page
+   Color palette: Catppuccin Mocha
+   Sections: tokens · reset · layout · navbar · badges · buttons ·
+             toggle · playground · connector cards · flip cards ·
+             truth table · classification · expression input ·
+             accordion · animations · scrollbar · responsive
+   ================================================================ */
+
+/* ── Design tokens (Catppuccin Mocha) ─────────────────────────── */
+:root {
+  --base:     #1e1e2e;
+  --mantle:   #181825;
+  --crust:    #11111b;
+  --surface0: #313244;
+  --surface1: #45475a;
+  --surface2: #585b70;
+  --overlay0: #6c7086;
+  --subtext:  #a6adc8;
+  --text:     #cdd6f4;
+  --mauve:    #cba6f7;
+  --blue:     #89b4fa;
+  --green:    #a6e3a1;
+  --red:      #f38ba8;
+  --yellow:   #f9e2af;
+  --peach:    #fab387;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--base);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* ── Animated background gradient ─────────────────────────────── */
+.bg-anim {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 15%, rgba(203,166,247,.07) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 85% 80%, rgba(137,180,250,.05) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(166,227,161,.03) 0%, transparent 60%),
+    var(--base);
+}
+
+/* ── Glassmorphism card ────────────────────────────────────────── */
+.glass {
+  background: rgba(49,50,68,.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(180,190,254,.1);
+  border-radius: 16px;
+}
+.glass-hover {
+  transition: transform .25s, box-shadow .25s, border-color .25s, background .25s;
+}
+.glass-hover:hover {
+  background: rgba(69,71,90,.7);
+  border-color: rgba(203,166,247,.25);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+
+/* ── Sticky navbar ─────────────────────────────────────────────── */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(24,24,37,.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(180,190,254,.08);
+}
+
+/* ── Badge pills ───────────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 11px; border-radius: 9999px;
+  font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+}
+.badge-mauve { background: rgba(203,166,247,.12); color: var(--mauve); border: 1px solid rgba(203,166,247,.25); }
+.badge-blue  { background: rgba(137,180,250,.12); color: var(--blue);  border: 1px solid rgba(137,180,250,.25); }
+.badge-green { background: rgba(166,227,161,.12); color: var(--green); border: 1px solid rgba(166,227,161,.25); }
+.badge-red   { background: rgba(243,139,168,.12); color: var(--red);   border: 1px solid rgba(243,139,168,.25); }
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 26px;
+  background: linear-gradient(135deg, var(--mauve), var(--blue));
+  color: var(--crust); font-weight: 700; font-size: .9rem;
+  border-radius: 10px; text-decoration: none; border: none; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(203,166,247,.35); }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 11px 26px;
+  background: rgba(49,50,68,.8); color: var(--text); font-weight: 600; font-size: .9rem;
+  border-radius: 10px; text-decoration: none; border: 1px solid rgba(180,190,254,.18); cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.btn-secondary:hover { border-color: rgba(203,166,247,.4); background: rgba(69,71,90,.8); }
+
+.btn-generate {
+  padding: 10px 20px; font-size: .88rem; font-weight: 600; cursor: pointer;
+  background: rgba(203,166,247,.12); color: var(--mauve);
+  border: 1px solid rgba(203,166,247,.28); border-radius: 9px;
+  transition: background .2s, box-shadow .2s; white-space: nowrap;
+}
+.btn-generate:hover { background: rgba(203,166,247,.22); box-shadow: 0 4px 16px rgba(203,166,247,.2); }
+
+/* ── Toggle switch (P / Q playground) ─────────────────────────── */
+.toggle {
+  appearance: none; -webkit-appearance: none;
+  width: 50px; height: 27px;
+  background: var(--surface1); border-radius: 13.5px;
+  cursor: pointer; position: relative; transition: background .2s;
+}
+.toggle::after {
+  content: ''; position: absolute;
+  width: 21px; height: 21px;
+  background: var(--overlay0); border-radius: 50%;
+  top: 3px; left: 3px; transition: transform .2s, background .2s;
+}
+.toggle:checked { background: var(--mauve); }
+.toggle:checked::after { transform: translateX(23px); background: var(--crust); }
+
+/* ── Live Playground result rows ───────────────────────────────── */
+.live-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 13px;
+  background: rgba(17,17,27,.6);
+  border-radius: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem;
+  border: 1px solid rgba(180,190,254,.06);
+  transition: background .15s;
+}
+.live-row:hover { background: rgba(49,50,68,.6); }
+.live-row .op { color: var(--subtext); }
+.v-true  { color: var(--green); font-weight: 700; }
+.v-false { color: var(--red);   font-weight: 700; }
+
+/* ── Connector reference cards ─────────────────────────────────── */
+.symbol {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem; font-weight: 700; color: var(--mauve);
+}
+.code-mini {
+  font-family: 'JetBrains Mono', monospace; font-size: .75rem;
+  background: var(--crust); border-radius: 8px; padding: 10px 12px;
+  line-height: 1.8;
+}
+
+/* ── Classification flip cards ─────────────────────────────────── */
+.flip-card { perspective: 1000px; height: 210px; cursor: default; }
+.flip-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d; transition: transform .5s ease;
+}
+.flip-card:hover .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 16px; padding: 1.5rem;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.flip-back { transform: rotateY(180deg); }
+
+/* ── Generator truth table ─────────────────────────────────────── */
+.truth-table {
+  width: 100%; border-collapse: collapse;
+  font-family: 'JetBrains Mono', monospace; font-size: .85rem;
+}
+.truth-table th {
+  padding: 10px 18px; text-align: center;
+  background: rgba(203,166,247,.09); color: var(--mauve); font-weight: 600;
+  border-bottom: 1px solid rgba(180,190,254,.12);
+}
+.truth-table td {
+  padding: 9px 18px; text-align: center;
+  border-bottom: 1px solid rgba(180,190,254,.05); color: var(--text);
+}
+.truth-table tr:last-child td { border-bottom: none; }
+.truth-table td.t { color: var(--green); font-weight: 700; }
+.truth-table td.f { color: var(--red);   font-weight: 700; }
+
+/* ── Classification result banner ──────────────────────────────── */
+.cls-result {
+  padding: 14px 20px; border-radius: 12px;
+  margin-top: 14px; font-weight: 600; text-align: center; font-size: 1rem;
+}
+.cls-tautology     { background: rgba(166,227,161,.08); border: 1px solid rgba(166,227,161,.28); color: var(--green); }
+.cls-contradiction { background: rgba(243,139,168,.08); border: 1px solid rgba(243,139,168,.28); color: var(--red); }
+.cls-contingency   { background: rgba(249,226,175,.08); border: 1px solid rgba(249,226,175,.28); color: var(--yellow); }
+
+/* ── Expression input & quick-example chips ────────────────────── */
+.expr-input {
+  background: rgba(17,17,27,.85); border: 1px solid rgba(180,190,254,.18);
+  border-radius: 10px; color: var(--text);
+  font-family: 'JetBrains Mono', monospace; font-size: .95rem;
+  padding: 11px 15px; width: 100%; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.expr-input:focus { border-color: rgba(203,166,247,.45); box-shadow: 0 0 0 3px rgba(203,166,247,.1); }
+.expr-input::placeholder { color: var(--surface2); }
+
+.expr-chip {
+  padding: 4px 11px; font-size: .76rem; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(49,50,68,.8); color: var(--subtext);
+  border: 1px solid rgba(180,190,254,.13); border-radius: 6px;
+  transition: border-color .15s, color .15s;
+}
+.expr-chip:hover { border-color: rgba(203,166,247,.4); color: var(--mauve); }
+
+/* ── Accordion (Acerca section) ────────────────────────────────── */
+.acc-panel {
+  max-height: 0; overflow: hidden;
+  transition: max-height .32s ease, padding .32s ease;
+}
+.acc-panel.open { max-height: 700px; }
+
+/* ── Scroll-in animations ──────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { opacity: 0; animation: fadeUp .65s ease forwards; }
+.delay-1 { animation-delay: .12s; }
+.delay-2 { animation-delay: .24s; }
+.delay-3 { animation-delay: .36s; }
+
+/* ── Custom scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: var(--base); }
+::-webkit-scrollbar-thumb { background: var(--surface1); border-radius: 3px; }
+
+/* ── Layout: hero two-column grid ──────────────────────────────── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+/* ── Layout: footer two-column grid ───────────────────────────── */
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Layout: main content padding ─────────────────────────────── */
+.main-content { padding: 3.5rem 1.5rem; }
+
+/* ── Responsive breakpoints ────────────────────────────────────── */
+
+/* Tablet / large phone */
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+}
+
+/* Small phone */
+@media (max-width: 640px) {
+  .main-content           { padding: 2rem 1rem; gap: 3rem; }
+  .footer-inner           { grid-template-columns: 1fr; gap: 1.25rem; }
+  .footer-inner > div:last-child { display: none; }
+
+  /* Navbar: allow wrapping on very narrow screens */
+  .navbar > div                          { flex-wrap: wrap; gap: 8px 12px; }
+  .navbar > div .flex.items-center.gap-3 { flex: 1 1 100%; }
+  .navbar > div nav                      { width: 100%; justify-content: flex-end; }
+
+  /* Playground toggles: stack before overflowing */
+  .playground-toggles { flex-wrap: wrap !important; gap: 1rem !important; }
+
+  /* Expression row: stack input + generate button */
+  .expr-row            { flex-wrap: wrap !important; }
+  .expr-row .btn-generate { width: 100%; }
+}
+
+/* Very small phone */
+@media (max-width: 420px) {
+  .main-content { padding: 1.5rem 0.75rem; gap: 2.5rem; }
+  .footer-inner { padding: 1.75rem 1rem; }
+  .hero-grid    { gap: 1.25rem; }
+}
