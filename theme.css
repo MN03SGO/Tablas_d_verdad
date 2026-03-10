@@ -8,6 +8,7 @@
 :root {
   /* Surfaces — Catppuccin Mocha */
   --bg:        #1e1e2e;
+  --crust:     #11111b;
   --card:      rgba(49, 50, 68, 0.55);
   --card-2:    rgba(49, 50, 68, 0.75);
   --stroke:    rgba(180, 190, 254, 0.12);

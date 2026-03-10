@@ -395,30 +395,24 @@
 
     </main>
 
-    <!-- ══════════════════ FOOTER ══════════════════ -->
-    <footer style="border-top:1px solid rgba(49,50,68,.8);margin-top:2rem;">
-        <div class="footer-inner">
-
-        <div style="display:flex;flex-direction:column;gap:1.25rem;">
-          <!-- Brand -->
+    <!-- ══════════════════ FOOTER (unified across all pages) ══════════════════ -->
+    <footer class="footer-unified">
+      <div class="footer-inner">
+        <div class="footer-inner__left">
           <div>
-            <div style="display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.05rem;color:var(--text);">
-              <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;font-size:1.4rem;">⊻</span> Logic Engine
+            <div class="footer-inner__brand">
+              <span class="footer-inner__brand-mark">⊻</span> Logic Engine
             </div>
-            <div style="font-size:.78rem;color:var(--overlay0);margin-top:.3rem;">Tablas de Verdad · Lógica Proposicional</div>
+            <div class="footer-inner__subtitle">Tablas de Verdad · Lógica Proposicional</div>
           </div>
-
-          <!-- Materia / Facultad / Grupo -->
-          <div style="display:flex;flex-wrap:wrap;gap:.5rem .75rem;font-size:.78rem;">
+          <div class="footer-inner__badges">
             <span class="badge badge-mauve">DESARROLLO DEL PENSAMIENTO LÓGICO MATEMÁTICO</span>
             <span class="badge badge-blue">Facultad de Ingeniería en Sistemas</span>
             <span class="badge badge-green">GRUPO 04</span>
           </div>
-
-          <!-- Integrantes -->
           <div>
-            <div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;color:var(--overlay0);margin-bottom:.5rem;">INTEGRANTES</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.2rem .75rem;font-size:.8rem;color:var(--subtext);font-family:'JetBrains Mono',monospace;">
+            <div class="footer-inner__integrantes-title">INTEGRANTES</div>
+            <div class="footer-inner__integrantes-grid">
               <div>Carlos Andres Ansorge Assompttion</div>
               <div>Anthony Manuel Sigaran Orellana</div>
               <div>Abel Ernesto Rodriguez Gaitan</div>
@@ -432,12 +426,9 @@
             </div>
           </div>
         </div>
-
-        <!-- CTA -->
-        <div style="padding-top:.25rem;">
+        <div class="footer-inner__cta">
           <a href="./logic-game.html" class="btn-primary" style="padding:9px 22px;font-size:.85rem;">▶ Ir al juego</a>
         </div>
-
       </div>
     </footer>
 

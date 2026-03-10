@@ -106,7 +106,13 @@
   padding: 18px 20px;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────── */
+/* ── Footer (unified, same as index/acerca/extra) ────────────────── */
+footer.footer-unified {
+  position: relative;
+  z-index: 1;
+}
+
+/* Legacy .game-footer (kept for reference, no longer used) */
 .game-footer {
   margin-top: 2rem;
   border-top: 1px solid rgba(180, 190, 254, 0.08);

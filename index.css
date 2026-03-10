@@ -249,7 +249,12 @@ body {
   align-items: center;
 }
 
-/* ── Layout: footer two-column grid ───────────────────────────── */
+/* ── Footer unified (same structure as styles.css) ─────────────── */
+.footer-unified {
+  border-top: 1px solid rgba(49,50,68,.8);
+  margin-top: 2rem;
+}
+
 .footer-inner {
   max-width: 1100px;
   margin: 0 auto;
@@ -258,6 +263,61 @@ body {
   grid-template-columns: 1fr auto;
   gap: 2rem;
   align-items: start;
+}
+
+.footer-inner__left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.footer-inner__brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.footer-inner__brand-mark {
+  color: var(--mauve);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem;
+}
+
+.footer-inner__subtitle {
+  font-size: .78rem;
+  color: var(--overlay0);
+  margin-top: .3rem;
+}
+
+.footer-inner__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .75rem;
+  font-size: .78rem;
+}
+
+.footer-inner__integrantes-title {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--overlay0);
+  margin-bottom: .5rem;
+}
+
+.footer-inner__integrantes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: .2rem .75rem;
+  font-size: .8rem;
+  color: var(--subtext);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.footer-inner__cta {
+  padding-top: .25rem;
 }
 
 /* ── Layout: main content padding ─────────────────────────────── */
@@ -274,7 +334,7 @@ body {
 @media (max-width: 640px) {
   .main-content           { padding: 2rem 1rem; gap: 3rem; }
   .footer-inner           { grid-template-columns: 1fr; gap: 1.25rem; }
-  .footer-inner > div:last-child { display: none; }
+  .footer-inner > .footer-inner__cta { display: none; }
 
   /* Navbar: allow wrapping on very narrow screens */
   .navbar > div                          { flex-wrap: wrap; gap: 8px 12px; }
