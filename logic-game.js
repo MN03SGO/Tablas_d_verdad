@@ -292,7 +292,7 @@
         <tr>
           <td>${i + 1}</td>
           ${vars.map((v) => `<td>${valueToLabel(r[v])}</td>`).join("")}
-          <td class="logic-drop-cell" data-result-cell="true" data-row-idx="${i}" data-value="" droppable="true">—</td>
+          <td class="logic-drop-cell" data-result-cell="true" data-row-idx="${i}" data-value="" droppable="true"></td>
         </tr>
       `
         )
