@@ -84,16 +84,16 @@
             </div>
           </div>
           <div class="logic-palette-group" data-palette-group="operators">
-            <span class="logic-palette-group__label">Operadores (referencia)</span>
+            <span class="logic-palette-group__label">Operadores — <em>clic para agregar columna</em></span>
             <div class="logic-blocks logic-blocks--ref">
-              <span class="logic-block logic-block--op" title="Y">∧</span>
-              <span class="logic-block logic-block--op" title="O">∨</span>
-              <span class="logic-block logic-block--op" title="No">¬</span>
-              <span class="logic-block logic-block--op" title="XOR">⊕</span>
-              <span class="logic-block logic-block--op" title="NAND">⊼</span>
-              <span class="logic-block logic-block--op" title="NOR">⊽</span>
-              <span class="logic-block logic-block--op" title="Implicación">→</span>
-              <span class="logic-block logic-block--op" title="Bicondicional">↔</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="∧" title="Conjunción (Y) — clic para agregar columna">∧</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="∨" title="Disyunción (O) — clic para agregar columna">∨</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="¬" title="Negación (No) — clic para agregar columna">¬</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="⊕" title="XOR — clic para agregar columna">⊕</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="⊼" title="NAND — clic para agregar columna">⊼</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="⊽" title="NOR — clic para agregar columna">⊽</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="→" title="Implicación — clic para agregar columna">→</span>
+              <span class="logic-block logic-block--op logic-block--op-btn" data-op="↔" title="Bicondicional — clic para agregar columna">↔</span>
             </div>
           </div>
         </div>
@@ -142,6 +142,22 @@
       </div>
     </footer>
 
+    <!-- Modal: add intermediate column -->
+    <div id="col-modal" class="col-modal-overlay" aria-modal="true" role="dialog" aria-labelledby="col-modal-title" hidden>
+      <div class="col-modal-box">
+        <div class="col-modal-header">
+          <span id="col-modal-title">Agregar columna intermedia</span>
+          <span class="col-modal-op-preview" id="col-modal-op"></span>
+        </div>
+        <p class="col-modal-hint">Escribe la expresión que irá como encabezado de la columna.</p>
+        <input id="col-modal-input" class="col-modal-input" type="text" placeholder="Ej: P ∧ Q  |  ¬P  |  P → Q" autocomplete="off" />
+        <div class="col-modal-actions">
+          <button id="col-modal-cancel" class="btn btn--ghost">Cancelar</button>
+          <button id="col-modal-add"    class="btn btn--primary">+ Agregar columna</button>
+        </div>
+      </div>
+    </div>
+
     <script src="./site.js" defer></script>
     <script src="./logic-game.js" defer></script>
     <script>
@@ -178,28 +194,129 @@
           var i = Math.floor(Math.random() * ENUNCIADOS.length);
           var level = ENUNCIADOS[i];
           window.__levelIndex = i;
-          var st = document.getElementById("level-statement");
-          var meta = document.getElementById("level-meta");
-          var thead = document.getElementById("truth-thead");
-          var tbody = document.getElementById("truth-tbody");
+          var st     = document.getElementById("level-statement");
+          var meta   = document.getElementById("level-meta");
+          var thead  = document.getElementById("truth-thead");
+          var tbody  = document.getElementById("truth-tbody");
           var status = document.getElementById("table-status");
-          if (st) st.textContent = level.statement;
+          if (st)   st.textContent = level.statement;
           if (meta) meta.textContent = "Variables: " + level.vars + ". Completa la columna resultado y clasifica.";
           if (thead) {
             var vars = ["P","Q","R","S"].slice(0, level.vars);
-            thead.innerHTML = "<tr><th>#</th>" + vars.map(function(v){ return "<th>"+v+"</th>"; }).join("") + "<th>Resultado (" + level.statement + ")</th></tr>";
+            thead.innerHTML = "<tr><th>#</th>" +
+              vars.map(function(v){ return "<th>" + v + "</th>"; }).join("") +
+              "<th>Resultado (" + level.statement + ")</th></tr>";
           }
           if (tbody) {
             var rows = getRows(level.vars);
-            var vars = ["p","q","r","s"].slice(0, level.vars);
+            var varsl = ["p","q","r","s"].slice(0, level.vars);
             tbody.innerHTML = rows.map(function(r, idx) {
-              return "<tr><td>" + (idx+1) + "</td>" + vars.map(function(v){ return "<td>" + vf(r[v]) + "</td>"; }).join("") + '<td class="logic-drop-cell" data-row-idx="' + idx + '" data-value="" droppable="true">—</td></tr>';
+              return "<tr><td>" + (idx+1) + "</td>" +
+                varsl.map(function(v){ return "<td>" + vf(r[v]) + "</td>"; }).join("") +
+                '<td class="logic-drop-cell" data-result-cell="true" data-row-idx="' + idx + '" data-value="" droppable="true">—</td></tr>';
             }).join("");
           }
           if (status) status.textContent = "Arrastra V o F a cada celda de resultado y pulsa Validar.";
         }
         var btn = document.getElementById("btn-generate-statement");
         if (btn) btn.addEventListener("click", generar);
+
+        // ── Intermediate column management ─────────────────────────────
+        var colCount = 0;
+
+        var OP_SUGGESTIONS = {
+          "∧": "P ∧ Q", "∨": "P ∨ Q", "¬": "¬P",
+          "⊕": "P ⊕ Q", "⊼": "P ⊼ Q", "⊽": "P ⊽ Q",
+          "→": "P → Q", "↔": "P ↔ Q"
+        };
+
+        var modal       = document.getElementById("col-modal");
+        var modalInput  = document.getElementById("col-modal-input");
+        var modalOp     = document.getElementById("col-modal-op");
+        var modalAdd    = document.getElementById("col-modal-add");
+        var modalCancel = document.getElementById("col-modal-cancel");
+
+        function openModal(op) {
+          modalOp.textContent = op;
+          modalInput.value = OP_SUGGESTIONS[op] || op;
+          modal.hidden = false;
+          modalInput.focus();
+          modalInput.select();
+        }
+        function closeModal() { modal.hidden = true; }
+
+        document.querySelectorAll(".logic-block--op-btn").forEach(function(btn) {
+          btn.addEventListener("click", function() {
+            openModal(btn.getAttribute("data-op") || btn.textContent.trim());
+          });
+        });
+
+        if (modalCancel) modalCancel.addEventListener("click", closeModal);
+        if (modal) modal.addEventListener("click", function(e) {
+          if (e.target === modal) closeModal();
+        });
+        if (modalInput) modalInput.addEventListener("keydown", function(e) {
+          if (e.key === "Enter")  { if (modalAdd) modalAdd.click(); }
+          if (e.key === "Escape") { closeModal(); }
+        });
+
+        if (modalAdd) modalAdd.addEventListener("click", function() {
+          var label = (modalInput.value || "").trim();
+          if (!label) return;
+          addIntermediateColumn(label);
+          closeModal();
+        });
+
+        function addIntermediateColumn(label) {
+          var thead = document.getElementById("truth-thead");
+          var tbody = document.getElementById("truth-tbody");
+          if (!thead || !tbody) return;
+          var bodyRows = tbody.querySelectorAll("tr");
+          if (!bodyRows.length || bodyRows[0].querySelectorAll("td").length <= 1) {
+            alert("Primero genera un enunciado para tener una tabla de verdad.");
+            return;
+          }
+          var colId = "icol-" + (++colCount);
+
+          // Insert <th> before the last <th> (Resultado)
+          var headerRow = thead.querySelector("tr");
+          var lastTh = headerRow ? headerRow.lastElementChild : null;
+          if (!lastTh) return;
+          var th = document.createElement("th");
+          th.className = "intermediate-col-th";
+          th.setAttribute("data-col-id", colId);
+          th.innerHTML =
+            '<span class="intermediate-col-label">' + label + '</span>' +
+            '<button class="remove-col-btn" data-col-id="' + colId + '" title="Eliminar columna">×</button>';
+          headerRow.insertBefore(th, lastTh);
+
+          // Insert <td> in each body row before the last <td>
+          bodyRows.forEach(function(tr, idx) {
+            var lastTd = tr.lastElementChild;
+            var td = document.createElement("td");
+            td.className = "logic-drop-cell logic-intermediate-cell";
+            td.setAttribute("data-col-id", colId);
+            td.setAttribute("data-row-idx", idx);
+            td.setAttribute("data-value", "");
+            td.setAttribute("droppable", "true");
+            td.textContent = "—";
+            tr.insertBefore(td, lastTd);
+          });
+        }
+
+        // Remove column when clicking ×
+        document.getElementById("truth-table") &&
+          document.getElementById("truth-table").addEventListener("click", function(e) {
+            var btn = e.target.closest(".remove-col-btn");
+            if (!btn) return;
+            var colId = btn.getAttribute("data-col-id");
+            var th = document.querySelector('th[data-col-id="' + colId + '"]');
+            if (th) th.remove();
+            document.querySelectorAll('[data-col-id="' + colId + '"]').forEach(function(el) {
+              el.remove();
+            });
+          });
+
       })();
     </script>
   </body>

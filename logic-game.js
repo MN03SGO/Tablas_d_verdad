@@ -292,7 +292,7 @@
         <tr>
           <td>${i + 1}</td>
           ${vars.map((v) => `<td>${valueToLabel(r[v])}</td>`).join("")}
-          <td class="logic-drop-cell" data-row-idx="${i}" data-value="" droppable="true">—</td>
+          <td class="logic-drop-cell" data-result-cell="true" data-row-idx="${i}" data-value="" droppable="true">—</td>
         </tr>
       `
         )
@@ -330,7 +330,7 @@
     if (!level) return false;
     const rows = getRows(level.vars);
     const expected = rows.map((r) => level.fn(r));
-    const cells = document.querySelectorAll(".logic-drop-cell");
+    const cells = document.querySelectorAll("[data-result-cell='true']");
     let filled = 0;
     let correct = 0;
 
@@ -399,7 +399,7 @@
     if (!level) return;
     const rows = getRows(level.vars);
     const expected = rows.map((r) => level.fn(r));
-    const cells = document.querySelectorAll(".logic-drop-cell");
+    const cells = document.querySelectorAll("[data-result-cell='true']");
     let hinted = 0;
     cells.forEach((cell, i) => {
       if (cell.getAttribute("data-value")) return;
