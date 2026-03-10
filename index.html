@@ -1,166 +1,845 @@
 <!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Página web con mini juegos</title>
-    <meta
-      name="description"
-      content="Landing page con sección Acerca de y Minijuegos con tablas de verdad."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./theme.css" />
-    <link rel="stylesheet" href="./styles.css" />
-    <script defer src="/_vercel/insights/script.js"></script>
-  </head>
-  <body>
-    <div class="bg" aria-hidden="true"></div>
-    <header class="container header">
-      <div class="brand">
-        <div class="brand__mark" aria-hidden="true">⊻</div>
-        <div class="brand__text">
-          <div class="brand__title">Página web con mini juegos</div>
-          <div class="brand__subtitle">Tablas de verdad · Lógica proposicional</div>
-        </div>
-      </div>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logic Engine — Tablas de Verdad</title>
+  <meta name="description" content="Aprende lógica proposicional con tablas de verdad interactivas. Tautologías, contradicciones y contingencias." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script defer src="/_vercel/insights/script.js"></script>
 
-      <nav class="nav">
-        <a class="btn btn--primary" href="./logic-game.html">Tablas de verdad</a>
-      </nav>
+  <style>
+    :root {
+      --base:      #1e1e2e;
+      --mantle:    #181825;
+      --crust:     #11111b;
+      --surface0:  #313244;
+      --surface1:  #45475a;
+      --surface2:  #585b70;
+      --overlay0:  #6c7086;
+      --subtext:   #a6adc8;
+      --text:      #cdd6f4;
+      --mauve:     #cba6f7;
+      --blue:      #89b4fa;
+      --green:     #a6e3a1;
+      --red:       #f38ba8;
+      --yellow:    #f9e2af;
+      --peach:     #fab387;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--base);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Animated Background ── */
+    .bg-anim {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 15% 15%, rgba(203,166,247,.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 85% 80%, rgba(137,180,250,.05) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(166,227,161,.03) 0%, transparent 60%),
+        var(--base);
+    }
+
+    /* ── Glassmorphism ── */
+    .glass {
+      background: rgba(49,50,68,.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(180,190,254,.1);
+      border-radius: 16px;
+    }
+    .glass-hover { transition: transform .25s, box-shadow .25s, border-color .25s, background .25s; }
+    .glass-hover:hover {
+      background: rgba(69,71,90,.7);
+      border-color: rgba(203,166,247,.25);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(24,24,37,.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(180,190,254,.08);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 11px; border-radius: 9999px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+    }
+    .badge-mauve { background: rgba(203,166,247,.12); color: var(--mauve); border: 1px solid rgba(203,166,247,.25); }
+    .badge-blue  { background: rgba(137,180,250,.12); color: var(--blue);  border: 1px solid rgba(137,180,250,.25); }
+    .badge-green { background: rgba(166,227,161,.12); color: var(--green); border: 1px solid rgba(166,227,161,.25); }
+    .badge-red   { background: rgba(243,139,168,.12); color: var(--red);   border: 1px solid rgba(243,139,168,.25); }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 26px;
+      background: linear-gradient(135deg, var(--mauve), var(--blue));
+      color: var(--crust); font-weight: 700; font-size: .9rem;
+      border-radius: 10px; text-decoration: none; border: none; cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(203,166,247,.35); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 11px 26px;
+      background: rgba(49,50,68,.8); color: var(--text); font-weight: 600; font-size: .9rem;
+      border-radius: 10px; text-decoration: none; border: 1px solid rgba(180,190,254,.18); cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-secondary:hover { border-color: rgba(203,166,247,.4); background: rgba(69,71,90,.8); }
+
+    .btn-generate {
+      padding: 10px 20px; font-size: .88rem; font-weight: 600; cursor: pointer;
+      background: rgba(203,166,247,.12); color: var(--mauve);
+      border: 1px solid rgba(203,166,247,.28); border-radius: 9px;
+      transition: background .2s, box-shadow .2s; white-space: nowrap;
+    }
+    .btn-generate:hover { background: rgba(203,166,247,.22); box-shadow: 0 4px 16px rgba(203,166,247,.2); }
+
+    /* ── Toggle Switch ── */
+    .toggle {
+      appearance: none; -webkit-appearance: none;
+      width: 50px; height: 27px;
+      background: var(--surface1); border-radius: 13.5px;
+      cursor: pointer; position: relative; transition: background .2s;
+    }
+    .toggle::after {
+      content: ''; position: absolute;
+      width: 21px; height: 21px;
+      background: var(--overlay0); border-radius: 50%;
+      top: 3px; left: 3px; transition: transform .2s, background .2s;
+    }
+    .toggle:checked { background: var(--mauve); }
+    .toggle:checked::after { transform: translateX(23px); background: var(--crust); }
+
+    /* ── Live Playground ── */
+    .live-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 13px;
+      background: rgba(17,17,27,.6);
+      border-radius: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: 1px solid rgba(180,190,254,.06);
+      transition: background .15s;
+    }
+    .live-row:hover { background: rgba(49,50,68,.6); }
+    .live-row .op  { color: var(--subtext); }
+    .v-true  { color: var(--green); font-weight: 700; }
+    .v-false { color: var(--red);   font-weight: 700; }
+
+    /* ── Connector Cards ── */
+    .symbol { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--mauve); }
+    .code-mini {
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem;
+      background: var(--crust); border-radius: 8px; padding: 10px 12px;
+      line-height: 1.8;
+    }
+
+    /* ── Flip Cards ── */
+    .flip-card { perspective: 1000px; height: 210px; cursor: default; }
+    .flip-inner {
+      position: relative; width: 100%; height: 100%;
+      transform-style: preserve-3d; transition: transform .5s ease;
+    }
+    .flip-card:hover .flip-inner { transform: rotateY(180deg); }
+    .flip-front, .flip-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 16px; padding: 1.5rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .flip-back { transform: rotateY(180deg); }
+
+    /* ── Truth Table ── */
+    .truth-table {
+      width: 100%; border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace; font-size: .85rem;
+    }
+    .truth-table th {
+      padding: 10px 18px; text-align: center;
+      background: rgba(203,166,247,.09); color: var(--mauve); font-weight: 600;
+      border-bottom: 1px solid rgba(180,190,254,.12);
+    }
+    .truth-table td {
+      padding: 9px 18px; text-align: center;
+      border-bottom: 1px solid rgba(180,190,254,.05); color: var(--text);
+    }
+    .truth-table tr:last-child td { border-bottom: none; }
+    .truth-table td.t { color: var(--green); font-weight: 700; }
+    .truth-table td.f { color: var(--red);   font-weight: 700; }
+
+    /* ── Classification Result ── */
+    .cls-result {
+      padding: 14px 20px; border-radius: 12px;
+      margin-top: 14px; font-weight: 600; text-align: center; font-size: 1rem;
+    }
+    .cls-tautology     { background: rgba(166,227,161,.08); border: 1px solid rgba(166,227,161,.28); color: var(--green); }
+    .cls-contradiction { background: rgba(243,139,168,.08); border: 1px solid rgba(243,139,168,.28); color: var(--red); }
+    .cls-contingency   { background: rgba(249,226,175,.08); border: 1px solid rgba(249,226,175,.28); color: var(--yellow); }
+
+    /* ── Expression Input ── */
+    .expr-input {
+      background: rgba(17,17,27,.85); border: 1px solid rgba(180,190,254,.18);
+      border-radius: 10px; color: var(--text);
+      font-family: 'JetBrains Mono', monospace; font-size: .95rem;
+      padding: 11px 15px; width: 100%; outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .expr-input:focus { border-color: rgba(203,166,247,.45); box-shadow: 0 0 0 3px rgba(203,166,247,.1); }
+    .expr-input::placeholder { color: var(--surface2); }
+
+    .expr-chip {
+      padding: 4px 11px; font-size: .76rem; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(49,50,68,.8); color: var(--subtext);
+      border: 1px solid rgba(180,190,254,.13); border-radius: 6px;
+      transition: border-color .15s, color .15s;
+    }
+    .expr-chip:hover { border-color: rgba(203,166,247,.4); color: var(--mauve); }
+
+    /* ── Accordion ── */
+    .acc-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height .32s ease, padding .32s ease;
+    }
+    .acc-panel.open { max-height: 700px; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up  { opacity: 0; animation: fadeUp .65s ease forwards; }
+    .delay-1  { animation-delay: .12s; }
+    .delay-2  { animation-delay: .24s; }
+    .delay-3  { animation-delay: .36s; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: var(--surface1); border-radius: 3px; }
+  </style>
+</head>
+<body class="relative">
+
+  <div class="bg-anim" aria-hidden="true"></div>
+
+  <div class="relative z-10">
+
+    <!-- ══════════════════ NAVBAR ══════════════════ -->
+    <header class="navbar">
+      <div style="max-width:1100px" class="mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;">⊻</span>
+          <div>
+            <div style="font-weight:700;color:var(--text);line-height:1.2;">Logic Engine</div>
+            <div style="font-size:.7rem;color:var(--overlay0);">Tablas de Verdad · Lógica Proposicional</div>
+          </div>
+        </div>
+        <nav class="flex items-center gap-4">
+          <a href="#conectores"    style="font-size:.85rem;color:var(--subtext);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--mauve)'" onmouseout="this.style.color='var(--subtext)'" class="hidden sm:block">Conectores</a>
+          <a href="#clasificacion" style="font-size:.85rem;color:var(--subtext);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--mauve)'" onmouseout="this.style.color='var(--subtext)'" class="hidden sm:block">Clasificación</a>
+          <a href="#generador"     style="font-size:.85rem;color:var(--subtext);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--mauve)'" onmouseout="this.style.color='var(--subtext)'" class="hidden sm:block">Generador</a>
+          <a href="./logic-game.html" class="btn-primary" style="padding:8px 20px;font-size:.85rem;">▶ Jugar</a>
+        </nav>
+      </div>
     </header>
 
-    <main class="container">
-      <section class="hero card reveal is-visible">
-        <div class="hero__left">
-          <h1 class="hero__title">Aprende practicando con mini juegos</h1>
-          <p class="hero__desc">
-            Explora ejercicios interactivos de <b>tablas de verdad</b> (3 retos) y revisa
-            una sección <b>Acerca de</b> con un formato tipo acordeón como tu ejemplo.
+    <main style="max-width:1100px;margin:0 auto;padding:3.5rem 1.5rem;display:flex;flex-direction:column;gap:5rem;">
+
+      <!-- ══════════════════ HERO ══════════════════ -->
+      <section class="fade-up" style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;">
+        <div>
+          <div class="badge badge-mauve" style="margin-bottom:1.25rem;">🎮 Minijuego de Lógica Proposicional</div>
+          <h1 style="font-size:clamp(2rem,4vw,2.9rem);font-weight:800;color:var(--text);line-height:1.15;margin-bottom:1.25rem;">
+            Dominando la<br/>
+            <span style="background:linear-gradient(135deg,var(--mauve),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+              Lógica Discreta
+            </span>
+          </h1>
+          <p style="color:var(--subtext);font-size:1.05rem;line-height:1.75;margin-bottom:1.75rem;">
+            Construye tablas de verdad, analiza resultados y clasifica proposiciones como
+            <strong style="color:var(--green);">tautologías</strong>,
+            <strong style="color:var(--red);">contradicciones</strong> o
+            <strong style="color:var(--yellow);">contingencias</strong>.
+            Aprende practicando con retroalimentación inmediata.
           </p>
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="./logic-game.html">Jugar Tablas de verdad</a>
+          <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem;">
+            <a href="./logic-game.html" class="btn-primary">▶ Comenzar a jugar</a>
+            <a href="#generador" class="btn-secondary">🧪 Generador de tablas</a>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+            <span class="badge badge-blue">3 Retos interactivos</span>
+            <span class="badge badge-mauve">Verificación automática</span>
+            <span class="badge badge-green">Sin registro</span>
           </div>
         </div>
 
-        <div class="hero__right">
-          <div class="preview">
-            <div class="preview__top">
-              <span class="pill">3 Truth Tables</span>
-              <span class="pill pill--muted">Auto-check</span>
+        <!-- LOGIC PLAYGROUND -->
+        <div class="glass" style="padding:1.5rem;" id="playground">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+            <span style="font-weight:700;color:var(--text);">🔬 Logic Playground</span>
+            <span class="badge badge-green">● Live</span>
+          </div>
+
+          <div style="display:flex;gap:2rem;margin-bottom:1.5rem;align-items:flex-end;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--mauve);">P</span>
+              <input type="checkbox" class="toggle" id="toggleP" checked />
+              <span id="labelP" style="font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--green);">V</span>
             </div>
-            <div class="preview__box">
-              <div class="preview__line"><span class="dot"></span> p ∧ q</div>
-              <div class="preview__line"><span class="dot"></span> p ∨ q</div>
-              <div class="preview__line"><span class="dot"></span> p ⊕ q</div>
-              <div class="preview__hint">Completa V/F y valida en un click.</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:.5rem;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--mauve);">Q</span>
+              <input type="checkbox" class="toggle" id="toggleQ" />
+              <span id="labelQ" style="font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--red);">F</span>
             </div>
+            <p style="flex:1;font-size:.78rem;color:var(--overlay0);padding-bottom:.2rem;">
+              Alterna P y Q para ver cómo reacciona cada conector en tiempo real.
+            </p>
+          </div>
+
+          <div id="liveResults" style="display:flex;flex-direction:column;gap:5px;"></div>
+        </div>
+      </section>
+
+      <!-- ══════════════════ CONECTORES ══════════════════ -->
+      <section id="conectores" class="fade-up delay-1">
+        <div style="margin-bottom:2rem;">
+          <div class="badge badge-blue" style="margin-bottom:.75rem;">Fundamentos</div>
+          <h2 style="font-size:1.75rem;font-weight:700;color:var(--text);margin-bottom:.5rem;">Conectores Lógicos</h2>
+          <p style="color:var(--subtext);max-width:600px;line-height:1.7;">
+            Los conectores permiten combinar proposiciones simples para formar expresiones compuestas.
+            El resultado depende únicamente de los valores de verdad de sus operandos.
+          </p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem;">
+
+          <div class="glass glass-hover" style="padding:1.25rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+              <span class="symbol">¬p</span>
+              <div>
+                <div style="font-weight:700;color:var(--text);font-size:.9rem;">Negación</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">NOT · !</div>
+              </div>
+            </div>
+            <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Invierte el valor de la proposición.</p>
+            <div class="code-mini">
+              <div><span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">→</span> <span style="color:var(--red);">F</span></div>
+              <div><span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">→</span> <span style="color:var(--green);">V</span></div>
+            </div>
+            <div style="margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--overlay0);">JS: <span style="color:var(--blue);">!p</span> &nbsp;|&nbsp; Python: <span style="color:var(--blue);">not p</span></div>
+          </div>
+
+          <div class="glass glass-hover" style="padding:1.25rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+              <span class="symbol">p∧q</span>
+              <div>
+                <div style="font-weight:700;color:var(--text);font-size:.9rem;">Conjunción</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">AND · &&</div>
+              </div>
+            </div>
+            <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Verdadero solo cuando <strong>ambas</strong> son verdaderas.</p>
+            <div class="code-mini">
+              <div><span style="color:var(--green);">V</span>∧<span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+              <div><span style="color:var(--green);">V</span>∧<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+              <div><span style="color:var(--red);">F</span>∧<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+            </div>
+            <div style="margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--overlay0);">JS: <span style="color:var(--blue);">p && q</span> &nbsp;|&nbsp; Python: <span style="color:var(--blue);">p and q</span></div>
+          </div>
+
+          <div class="glass glass-hover" style="padding:1.25rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+              <span class="symbol">p∨q</span>
+              <div>
+                <div style="font-weight:700;color:var(--text);font-size:.9rem;">Disyunción</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">OR · ||</div>
+              </div>
+            </div>
+            <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Verdadero cuando <strong>al menos una</strong> es verdadera.</p>
+            <div class="code-mini">
+              <div><span style="color:var(--green);">V</span>∨<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+              <div><span style="color:var(--red);">F</span>∨<span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+              <div><span style="color:var(--red);">F</span>∨<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+            </div>
+            <div style="margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--overlay0);">JS: <span style="color:var(--blue);">p || q</span> &nbsp;|&nbsp; Python: <span style="color:var(--blue);">p or q</span></div>
+          </div>
+
+          <div class="glass glass-hover" style="padding:1.25rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+              <span class="symbol">p⊕q</span>
+              <div>
+                <div style="font-weight:700;color:var(--text);font-size:.9rem;">Disyunción Exclusiva</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">XOR · !==</div>
+              </div>
+            </div>
+            <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Verdadero cuando los valores son <strong>distintos</strong>.</p>
+            <div class="code-mini">
+              <div><span style="color:var(--green);">V</span>⊕<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+              <div><span style="color:var(--green);">V</span>⊕<span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+              <div><span style="color:var(--red);">F</span>⊕<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+            </div>
+            <div style="margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--overlay0);">JS: <span style="color:var(--blue);">p !== q</span> &nbsp;|&nbsp; Python: <span style="color:var(--blue);">p ^ q</span></div>
+          </div>
+
+          <div class="glass glass-hover" style="padding:1.25rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+              <span class="symbol">p→q</span>
+              <div>
+                <div style="font-weight:700;color:var(--text);font-size:.9rem;">Implicación</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">IF…THEN</div>
+              </div>
+            </div>
+            <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Solo Falso cuando <strong>p=V y q=F</strong>.</p>
+            <div class="code-mini">
+              <div><span style="color:var(--green);">V</span>→<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+              <div><span style="color:var(--green);">V</span>→<span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+              <div><span style="color:var(--red);">F</span>→<span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+            </div>
+            <div style="margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--overlay0);">JS: <span style="color:var(--blue);">!p || q</span> &nbsp;|&nbsp; if(p) result=q</div>
+          </div>
+
+          <div class="glass glass-hover" style="padding:1.25rem;">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+              <span class="symbol">p↔q</span>
+              <div>
+                <div style="font-weight:700;color:var(--text);font-size:.9rem;">Bicondicional</div>
+                <div style="font-size:.72rem;color:var(--overlay0);font-family:'JetBrains Mono',monospace;">IFF · ===</div>
+              </div>
+            </div>
+            <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;">Verdadero cuando <strong>ambos valen lo mismo</strong>.</p>
+            <div class="code-mini">
+              <div><span style="color:var(--green);">V</span>↔<span style="color:var(--green);">V</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+              <div><span style="color:var(--green);">V</span>↔<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--red);">F</span></div>
+              <div><span style="color:var(--red);">F</span>↔<span style="color:var(--red);">F</span> <span style="color:var(--overlay0);">=</span> <span style="color:var(--green);">V</span></div>
+            </div>
+            <div style="margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--overlay0);">JS: <span style="color:var(--blue);">p === q</span> &nbsp;|&nbsp; Python: <span style="color:var(--blue);">p == q</span></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════ CLASIFICACIÓN ══════════════════ -->
+      <section id="clasificacion" class="fade-up delay-2">
+        <div style="margin-bottom:2rem;">
+          <div class="badge badge-mauve" style="margin-bottom:.75rem;">Análisis de Resultados</div>
+          <h2 style="font-size:1.75rem;font-weight:700;color:var(--text);margin-bottom:.5rem;">Clasificación de Proposiciones</h2>
+          <p style="color:var(--subtext);max-width:620px;line-height:1.7;">
+            Una vez construida la tabla, analiza la columna final para determinar qué tipo de
+            proposición compuesta tienes. <span style="color:var(--mauve);">Pasa el cursor</span> sobre cada tarjeta para ver el detalle.
+          </p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;">
+
+          <!-- Tautología -->
+          <div class="flip-card">
+            <div class="flip-inner">
+              <div class="flip-front glass" style="background:rgba(166,227,161,.05);border-color:rgba(166,227,161,.2);align-items:center;">
+                <div style="font-size:3rem;margin-bottom:.75rem;">⊤</div>
+                <h3 style="font-size:1.3rem;font-weight:700;color:var(--green);margin-bottom:.4rem;">Tautología</h3>
+                <p style="font-size:.85rem;color:var(--subtext);text-align:center;">Siempre Verdadera</p>
+                <p style="font-size:.7rem;color:var(--overlay0);margin-top:.75rem;font-family:'JetBrains Mono',monospace;">hover →</p>
+              </div>
+              <div class="flip-back" style="background:rgba(166,227,161,.07);border:1px solid rgba(166,227,161,.2);">
+                <h3 style="font-weight:700;color:var(--green);margin-bottom:.6rem;">Tautología (⊤)</h3>
+                <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;line-height:1.6;">
+                  La columna final contiene <strong style="color:var(--green);">únicamente V</strong>.
+                  La proposición es verdadera para <em>toda</em> asignación posible de sus variables.
+                </p>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;background:var(--crust);border-radius:8px;padding:8px 12px;color:var(--green);">
+                  p ∨ ¬p → V, V, V, V
+                </div>
+                <p style="font-size:.75rem;color:var(--overlay0);margin-top:.5rem;">"Llueve o no llueve" — siempre cierto.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contradicción -->
+          <div class="flip-card">
+            <div class="flip-inner">
+              <div class="flip-front glass" style="background:rgba(243,139,168,.05);border-color:rgba(243,139,168,.2);align-items:center;">
+                <div style="font-size:3rem;margin-bottom:.75rem;">⊥</div>
+                <h3 style="font-size:1.3rem;font-weight:700;color:var(--red);margin-bottom:.4rem;">Contradicción</h3>
+                <p style="font-size:.85rem;color:var(--subtext);text-align:center;">Siempre Falsa</p>
+                <p style="font-size:.7rem;color:var(--overlay0);margin-top:.75rem;font-family:'JetBrains Mono',monospace;">hover →</p>
+              </div>
+              <div class="flip-back" style="background:rgba(243,139,168,.07);border:1px solid rgba(243,139,168,.2);">
+                <h3 style="font-weight:700;color:var(--red);margin-bottom:.6rem;">Contradicción (⊥)</h3>
+                <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;line-height:1.6;">
+                  La columna final contiene <strong style="color:var(--red);">únicamente F</strong>.
+                  La proposición es falsa para <em>toda</em> asignación posible de sus variables.
+                </p>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;background:var(--crust);border-radius:8px;padding:8px 12px;color:var(--red);">
+                  p ∧ ¬p → F, F, F, F
+                </div>
+                <p style="font-size:.75rem;color:var(--overlay0);margin-top:.5rem;">"Llueve y no llueve" — imposible.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contingencia -->
+          <div class="flip-card">
+            <div class="flip-inner">
+              <div class="flip-front glass" style="background:rgba(249,226,175,.05);border-color:rgba(249,226,175,.2);align-items:center;">
+                <div style="font-size:3rem;margin-bottom:.75rem;">◑</div>
+                <h3 style="font-size:1.3rem;font-weight:700;color:var(--yellow);margin-bottom:.4rem;">Contingencia</h3>
+                <p style="font-size:.85rem;color:var(--subtext);text-align:center;">Resultados mixtos</p>
+                <p style="font-size:.7rem;color:var(--overlay0);margin-top:.75rem;font-family:'JetBrains Mono',monospace;">hover →</p>
+              </div>
+              <div class="flip-back" style="background:rgba(249,226,175,.07);border:1px solid rgba(249,226,175,.2);">
+                <h3 style="font-weight:700;color:var(--yellow);margin-bottom:.6rem;">Contingencia</h3>
+                <p style="font-size:.84rem;color:var(--subtext);margin-bottom:.75rem;line-height:1.6;">
+                  La columna final tiene <strong style="color:var(--yellow);">mezcla de V y F</strong>.
+                  El resultado depende de los valores de las variables. No es tautología ni contradicción.
+                </p>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.78rem;background:var(--crust);border-radius:8px;padding:8px 12px;color:var(--yellow);">
+                  p ∧ q → F, F, F, V
+                </div>
+                <p style="font-size:.75rem;color:var(--overlay0);margin-top:.5rem;">"Llueve y hace calor" — depende del día.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════ GENERADOR ══════════════════ -->
+      <section id="generador" class="fade-up delay-3">
+        <div style="margin-bottom:2rem;">
+          <div class="badge badge-green" style="margin-bottom:.75rem;">Herramienta Interactiva</div>
+          <h2 style="font-size:1.75rem;font-weight:700;color:var(--text);margin-bottom:.5rem;">Generador de Tablas de Verdad</h2>
+          <p style="color:var(--subtext);max-width:620px;line-height:1.7;">
+            Escribe una expresión con <code style="color:var(--mauve);font-family:'JetBrains Mono',monospace;">P</code> y
+            <code style="color:var(--mauve);font-family:'JetBrains Mono',monospace;">Q</code>.
+            El generador construye la tabla completa y clasifica automáticamente la proposición.
+          </p>
+        </div>
+
+        <div class="glass" style="padding:1.75rem;">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-bottom:.75rem;">
+            <span style="font-size:.75rem;color:var(--overlay0);">Ejemplos rápidos:</span>
+            <button class="expr-chip" onclick="setExpr('P AND Q')">P AND Q</button>
+            <button class="expr-chip" onclick="setExpr('P OR Q')">P OR Q</button>
+            <button class="expr-chip" onclick="setExpr('P OR NOT P')">P OR NOT P</button>
+            <button class="expr-chip" onclick="setExpr('P AND NOT P')">P AND NOT P</button>
+            <button class="expr-chip" onclick="setExpr('NOT P OR Q')">NOT P OR Q</button>
+            <button class="expr-chip" onclick="setExpr('P XOR Q')">P XOR Q</button>
+            <button class="expr-chip" onclick="setExpr('P IMPLIES Q')">P IMPLIES Q</button>
+            <button class="expr-chip" onclick="setExpr('P IFF Q')">P IFF Q</button>
+          </div>
+
+          <div style="display:flex;gap:.75rem;margin-bottom:.75rem;">
+            <input type="text" class="expr-input" id="exprInput"
+                   placeholder="Ej: P AND Q  |  NOT P OR Q  |  P IMPLIES Q"
+                   value="P AND Q"
+                   onkeydown="if(event.key==='Enter') generateTable()" />
+            <button class="btn-generate" onclick="generateTable()">Generar ↵</button>
+          </div>
+
+          <p style="font-size:.75rem;color:var(--surface2);margin-bottom:1.25rem;">
+            Operadores: <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;">AND · OR · NOT · XOR · IMPLIES · IFF</span>
+            &nbsp;|&nbsp; Símbolos: <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;">∧ ∨ ¬ ⊕ → ↔</span>
+          </p>
+
+          <div id="tableOutput"></div>
+        </div>
+      </section>
+
+      <!-- ══════════════════ ACERCA ══════════════════ -->
+      <section id="acerca">
+        <div class="glass" style="padding:1.75rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:.4rem;">
+            <h2 style="font-size:1.3rem;font-weight:700;color:var(--text);">Acerca del Proyecto</h2>
+            <span class="badge badge-blue">UFG · Grupo 001</span>
+          </div>
+          <p style="font-size:.82rem;color:var(--overlay0);margin-bottom:1.5rem;">Proyecto de Lógica de Programación — Facultad de Ingeniería en Sistemas</p>
+
+          <div style="display:flex;flex-direction:column;gap:.5rem;">
+
+            <div>
+              <button onclick="toggleAcc(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;border-radius:10px;background:var(--surface0);border:none;color:var(--text);cursor:pointer;font-size:.9rem;font-weight:600;text-align:left;transition:background .2s;" onmouseover="this.style.background='var(--surface1)'" onmouseout="this.style.background='var(--surface0)'">
+                <span>Objetivos del proyecto</span>
+                <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;font-size:1.1rem;" data-icon>+</span>
+              </button>
+              <div class="acc-panel" style="padding:0 1.1rem;">
+                <div style="padding:.85rem 0;font-size:.88rem;color:var(--subtext);line-height:2;">
+                  <div style="display:flex;gap:.6rem;"><span style="color:var(--mauve);">→</span> Construir correctamente tablas de verdad.</div>
+                  <div style="display:flex;gap:.6rem;"><span style="color:var(--mauve);">→</span> Analizar los resultados obtenidos.</div>
+                  <div style="display:flex;gap:.6rem;"><span style="color:var(--mauve);">→</span> Determinar si las proposiciones son tautologías, contradicciones o contingencias.</div>
+                  <div style="display:flex;gap:.6rem;"><span style="color:var(--mauve);">→</span> Interpretar los resultados desde una perspectiva lógica.</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <button onclick="toggleAcc(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.1rem;border-radius:10px;background:var(--surface0);border:none;color:var(--text);cursor:pointer;font-size:.9rem;font-weight:600;text-align:left;transition:background .2s;" onmouseover="this.style.background='var(--surface1)'" onmouseout="this.style.background='var(--surface0)'">
+                <span>¿Cómo se juega?</span>
+                <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;font-size:1.1rem;" data-icon>+</span>
+              </button>
+              <div class="acc-panel" style="padding:0 1.1rem;">
+                <div style="padding:.85rem 0;font-size:.88rem;color:var(--subtext);line-height:1.75;">
+                  Entra a <strong style="color:var(--mauve);">Tablas de verdad</strong>, completa la columna resultado con
+                  <strong>V</strong> (Verdadero) o <strong>F</strong> (Falso), presiona <strong>Validar tabla</strong>
+                  y elige la clasificación correcta. El sistema valida al instante con retroalimentación visual.
+                </div>
+              </div>
+            </div>
+
+
           </div>
         </div>
       </section>
 
-      <section id="acerca" class="card card--acerca reveal is-visible" style="margin-top: 14px"
-               data-collapsible data-open="false" data-collapsible-class="is-closed">
-        <div class="acerca-header">
-          <h2 class="page-head__title" style="margin: 0">Acerca de</h2>
-          <button type="button" class="acerca-toggle" id="acerca-toggle"
-                  data-collapsible-trigger aria-expanded="false" aria-controls="acerca-content">
-            <span class="acerca-toggle__icon" aria-hidden="true">+</span>
-          </button>
-        </div>
-        <div id="acerca-content" class="acerca-content is-closed"
-             data-collapsible-panel aria-hidden="true">
-          <div class="accordion" data-accordion="independent" aria-label="Acerca de">
-
-            <div class="acc-item" data-collapsible data-open="false">
-              <button class="acc-btn" type="button"
-                      data-collapsible-trigger aria-expanded="false">
-                <span>¿De qué trata este proyecto?</span>
-                <span class="acc-icon" aria-hidden="true">+</span>
-              </button>
-              <div class="acc-panel" data-collapsible-panel>
-                Es una landing page con mini juegos de lógica proposicional, enfocados en
-                practicar tablas de verdad con retroalimentación inmediata.
-              </div>
-            </div>
-
-            <div class="acc-item" data-collapsible data-open="false">
-              <button class="acc-btn" type="button"
-                      data-collapsible-trigger aria-expanded="false">
-                <span>¿Cómo se juega Tablas de verdad?</span>
-                <span class="acc-icon" aria-hidden="true">+</span>
-              </button>
-              <div class="acc-panel" data-collapsible-panel>
-                Entra a <b>Tablas de verdad</b>, completa la columna resultado arrastrando
-                <b>V</b> o <b>F</b>, presiona <b>Validar tabla</b> y luego elige la
-                clasificación correcta (tautología, contradicción o contingencia).
-              </div>
-            </div>
-
-            <div class="acc-item" data-collapsible data-open="false">
-              <button class="acc-btn" type="button"
-                      data-collapsible-trigger aria-expanded="false">
-                <span>¿Qué valores acepta el verificador?</span>
-                <span class="acc-icon" aria-hidden="true">+</span>
-              </button>
-              <div class="acc-panel" data-collapsible-panel>
-                Puedes escribir <b>V</b> / <b>F</b> (recomendado). También acepta
-                <b>1</b>/<b>0</b> o <b>T</b>/<b>F</b>.
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <section class="grid reveal is-visible" style="margin-top: 12px">
-        <div class="card card--link">
-          <div class="card__title">Idea 1: Reto 4</div>
-          <div class="card__desc">Agregar implicación (p → q) o bicondicional (p ↔ q).</div>
-          <div class="card__cta">Pendiente</div>
-        </div>
-        <div class="card card--link">
-          <div class="card__title">Idea 2: Puntaje</div>
-          <div class="card__desc">Guardar progreso/puntaje en el navegador.</div>
-          <div class="card__cta">Pendiente</div>
-        </div>
-        <div class="card card--link">
-          <div class="card__title">Idea 3: Explicación</div>
-          <div class="card__desc">Mostrar por qué cada fila da V o F.</div>
-          <div class="card__cta">Pendiente</div>
-        </div>
-      </section>
     </main>
 
-    <footer class="container footer">
-      <div class="footer__left">
-        <div class="footer__title">GRUPO: 001</div>
-        <div class="footer__text" id="footer-meta">Facultad de Ingenieria en Sistemas</div>
-        <div class="footer_integrantes">INTEGRANTES</div>
-        <div class="integrantes">
-          <p>
-            Carlos Andres Ansorge Assompttion<br>
-            Anthony Manuel Sigaran Orellana<br>
-            Abel Ernesto Rodriguez Gaitan<br>
-            Jorge Ernesto Majano Santos<br>
-            Blanca Consuelo <br>
-            Karla Marielos Gámez Lovos<br>
-            Josue Enrique Puro Lopez <br>
-            Erick Ernesto López Hernández<br>
-            Keyri Elisa Alvarado Abrego<br>
-            Briam Jahir Ortiz Moreno<br>
-            
-          </p>
+    <!-- ══════════════════ FOOTER ══════════════════ -->
+    <footer style="border-top:1px solid rgba(49,50,68,.8);margin-top:2rem;">
+      <div style="max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:start;">
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+          <!-- Brand -->
+          <div>
+            <div style="display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.05rem;color:var(--text);">
+              <span style="color:var(--mauve);font-family:'JetBrains Mono',monospace;font-size:1.4rem;">⊻</span> Logic Engine
+            </div>
+            <div style="font-size:.78rem;color:var(--overlay0);margin-top:.3rem;">Tablas de Verdad · Lógica Proposicional</div>
+          </div>
+
+          <!-- Materia / Facultad / Grupo -->
+          <div style="display:flex;flex-wrap:wrap;gap:.5rem .75rem;font-size:.78rem;">
+            <span class="badge badge-mauve">DESARROLLO DEL PENSAMIENTO LÓGICO MATEMÁTICO</span>
+            <span class="badge badge-blue">Facultad de Ingeniería en Sistemas</span>
+            <span class="badge badge-green">GRUPO 04</span>
+          </div>
+
+          <!-- Integrantes -->
+          <div>
+            <div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;color:var(--overlay0);margin-bottom:.5rem;">INTEGRANTES</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.2rem .75rem;font-size:.8rem;color:var(--subtext);font-family:'JetBrains Mono',monospace;">
+              <div>Carlos Andres Ansorge Assompttion</div>
+              <div>Anthony Manuel Sigaran Orellana</div>
+              <div>Abel Ernesto Rodriguez Gaitan</div>
+              <div>Jorge Ernesto Majano Santos</div>
+              <div>Blanca Consuelo</div>
+              <div>Karla Marielos Gámez Lovos</div>
+              <div>Josue Enrique Puro Lopez</div>
+              <div>Erick Ernesto López Hernández</div>
+              <div>Keyri Elisa Alvarado Abrego</div>
+              <div>Briam Jahir Ortiz Moreno</div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="footer__right">
-        <a class="footer__link" href="./logic-game.html">Tablas de verdad</a>
+
+        <!-- CTA -->
+        <div style="padding-top:.25rem;">
+          <a href="./logic-game.html" class="btn-primary" style="padding:9px 22px;font-size:.85rem;">▶ Ir al juego</a>
+        </div>
+
       </div>
     </footer>
-    <script src="./site.js" defer></script>
-  </body>
+
+  </div><!-- /.relative.z-10 -->
+
+  <script>
+    // ── Logic Playground ─────────────────────────────────────────────
+    const toggleP    = document.getElementById('toggleP');
+    const toggleQ    = document.getElementById('toggleQ');
+    const labelP     = document.getElementById('labelP');
+    const labelQ     = document.getElementById('labelQ');
+    const liveResult = document.getElementById('liveResults');
+
+    const vf  = b => b ? 'V' : 'F';
+    const vcls= b => b ? 'v-true' : 'v-false';
+
+    function updatePlayground() {
+      const P = toggleP.checked, Q = toggleQ.checked;
+      labelP.textContent = vf(P); labelP.style.color = P ? 'var(--green)' : 'var(--red)';
+      labelQ.textContent = vf(Q); labelQ.style.color = Q ? 'var(--green)' : 'var(--red)';
+      const ops = [
+        { sym: '¬P',    r: !P        },
+        { sym: '¬Q',    r: !Q        },
+        { sym: 'P ∧ Q', r: P && Q    },
+        { sym: 'P ∨ Q', r: P || Q    },
+        { sym: 'P ⊕ Q', r: P !== Q   },
+        { sym: 'P → Q', r: !P || Q   },
+        { sym: 'P ↔ Q', r: P === Q   },
+      ];
+      liveResult.innerHTML = ops.map(o =>
+        `<div class="live-row">
+          <span class="op">${o.sym}</span>
+          <span class="${vcls(o.r)}">${vf(o.r)}</span>
+        </div>`
+      ).join('');
+    }
+    toggleP.addEventListener('change', updatePlayground);
+    toggleQ.addEventListener('change', updatePlayground);
+    updatePlayground();
+
+    // ── Recursive Descent Parser ──────────────────────────────────────
+    function tokenize(expr) {
+      return (expr.match(/\(|\)|[A-Za-z]+/g) || []);
+    }
+
+    function parseExpr(tokens, pos, P, Q) { return parseIFF(tokens, pos, P, Q); }
+
+    function parseIFF(tokens, pos, P, Q) {
+      let l = parseIMPLIES(tokens, pos, P, Q);
+      while (pos.i < tokens.length && tokens[pos.i].toUpperCase() === 'IFF') {
+        pos.i++; const r = parseIMPLIES(tokens, pos, P, Q); l = (l === r);
+      }
+      return l;
+    }
+    function parseIMPLIES(tokens, pos, P, Q) {
+      let l = parseOR(tokens, pos, P, Q);
+      while (pos.i < tokens.length && tokens[pos.i].toUpperCase() === 'IMPLIES') {
+        pos.i++; const r = parseOR(tokens, pos, P, Q); l = (!l || r);
+      }
+      return l;
+    }
+    function parseOR(tokens, pos, P, Q) {
+      let l = parseXOR(tokens, pos, P, Q);
+      while (pos.i < tokens.length && tokens[pos.i].toUpperCase() === 'OR') {
+        pos.i++; const r = parseXOR(tokens, pos, P, Q); l = (l || r);
+      }
+      return l;
+    }
+    function parseXOR(tokens, pos, P, Q) {
+      let l = parseAND(tokens, pos, P, Q);
+      while (pos.i < tokens.length && tokens[pos.i].toUpperCase() === 'XOR') {
+        pos.i++; const r = parseAND(tokens, pos, P, Q); l = (l !== r);
+      }
+      return l;
+    }
+    function parseAND(tokens, pos, P, Q) {
+      let l = parseNOT(tokens, pos, P, Q);
+      while (pos.i < tokens.length && tokens[pos.i].toUpperCase() === 'AND') {
+        pos.i++; const r = parseNOT(tokens, pos, P, Q); l = (l && r);
+      }
+      return l;
+    }
+    function parseNOT(tokens, pos, P, Q) {
+      if (pos.i < tokens.length && tokens[pos.i].toUpperCase() === 'NOT') {
+        pos.i++; return !parseNOT(tokens, pos, P, Q);
+      }
+      return parseAtom(tokens, pos, P, Q);
+    }
+    function parseAtom(tokens, pos, P, Q) {
+      if (pos.i >= tokens.length) return false;
+      const t = tokens[pos.i];
+      if (t === '(') {
+        pos.i++;
+        const v = parseExpr(tokens, pos, P, Q);
+        if (pos.i < tokens.length && tokens[pos.i] === ')') pos.i++;
+        return v;
+      }
+      pos.i++;
+      if (t.toUpperCase() === 'P') return P;
+      if (t.toUpperCase() === 'Q') return Q;
+      return false;
+    }
+
+    function evalExpr(raw, P, Q) {
+      const expr = raw.trim()
+        .replace(/¬/g,' NOT ').replace(/∧/g,' AND ').replace(/∨/g,' OR ')
+        .replace(/⊕/g,' XOR ').replace(/→/g,' IMPLIES ').replace(/↔/g,' IFF ')
+        .replace(/\s+/g,' ').trim();
+      const tokens = tokenize(expr);
+      const pos = { i: 0 };
+      try {
+        const v = parseExpr(tokens, pos, P, Q);
+        return (typeof v === 'boolean') ? v : null;
+      } catch { return null; }
+    }
+
+    // ── Table Generator ───────────────────────────────────────────────
+    function generateTable() {
+      const raw = document.getElementById('exprInput').value.trim();
+      if (!raw) return;
+      const combos = [[true,true],[true,false],[false,true],[false,false]];
+      const rows = combos.map(([P,Q]) => ({ P, Q, r: evalExpr(raw, P, Q) }));
+      const out = document.getElementById('tableOutput');
+
+      if (rows.some(r => r.r === null)) {
+        out.innerHTML = `<div style="color:var(--red);font-size:.88rem;padding:.75rem 1rem;background:rgba(243,139,168,.08);border:1px solid rgba(243,139,168,.25);border-radius:10px;">
+          ⚠ No se pudo evaluar la expresión. Revisa la sintaxis e inténtalo de nuevo.
+        </div>`;
+        return;
+      }
+
+      const allV = rows.every(r => r.r === true);
+      const allF = rows.every(r => r.r === false);
+      const type = allV ? 'tautology' : allF ? 'contradiction' : 'contingency';
+
+      const info = {
+        tautology:    { label:'⊤ Tautología',   cls:'cls-tautology',     desc:'Todos los resultados son V. La proposición es siempre verdadera sin importar los valores de P y Q.' },
+        contradiction:{ label:'⊥ Contradicción', cls:'cls-contradiction', desc:'Todos los resultados son F. La proposición es siempre falsa sin importar los valores de P y Q.' },
+        contingency:  { label:'◑ Contingencia',  cls:'cls-contingency',   desc:'Hay mezcla de V y F. El resultado depende de los valores asignados a P y Q.' },
+      }[type];
+
+      const label = raw.length > 32 ? raw.substring(0,30)+'…' : raw;
+      const cell  = (b, cls='') => `<td class="${cls}${b?'t':'f'}">${b?'V':'F'}</td>`;
+
+      out.innerHTML = `
+        <div style="overflow-x:auto;">
+          <table class="truth-table" style="margin-bottom:.75rem;">
+            <thead><tr><th>P</th><th>Q</th><th style="max-width:200px;">${label}</th></tr></thead>
+            <tbody>
+              ${rows.map(r=>`<tr>${cell(r.P)}${cell(r.Q)}${cell(r.r)}</tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="cls-result ${info.cls}">
+          ${info.label} <span style="font-weight:400;font-size:.88rem;opacity:.9;"> — ${info.desc}</span>
+        </div>`;
+    }
+
+    function setExpr(e) {
+      document.getElementById('exprInput').value = e;
+      generateTable();
+    }
+
+    generateTable();
+
+    // ── Accordion ─────────────────────────────────────────────────────
+    function toggleAcc(btn) {
+      const panel = btn.nextElementSibling;
+      const icon  = btn.querySelector('[data-icon]');
+      const open  = panel.classList.toggle('open');
+      icon.textContent = open ? '−' : '+';
+    }
+  </script>
+</body>
 </html>
