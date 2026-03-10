@@ -601,17 +601,28 @@
 
 /* ── Operator buttons: clickable to add columns ── */
 .logic-block--op-btn {
+  pointer-events: auto;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+  border: 2px solid rgba(163, 123, 255, 0.4);
+  background: linear-gradient(135deg, rgba(163, 123, 255, 0.18), rgba(121, 166, 255, 0.18));
+  color: #d0b8ff;
+  opacity: 1;
+  font-size: 16px;
+  padding: 10px 16px;
+  min-width: 44px;
+  min-height: 44px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
 }
 .logic-block--op-btn:hover {
-  background: rgba(121, 166, 255, 0.18);
-  border-color: rgba(121, 166, 255, 0.5);
-  color: var(--primary, #79a6ff);
+  background: linear-gradient(135deg, rgba(163, 123, 255, 0.32), rgba(121, 166, 255, 0.28));
+  border-color: rgba(163, 123, 255, 0.7);
+  color: #e8d5ff;
   transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(163, 123, 255, 0.25);
 }
 .logic-block--op-btn:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 .logic-palette-group__label em {
   font-style: normal;
