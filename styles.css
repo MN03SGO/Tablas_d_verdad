@@ -117,13 +117,15 @@ main {
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, rgba(121, 166, 255, 0.95), rgba(163, 123, 255, 0.95));
+  background: linear-gradient(135deg, #cba6f7, #89b4fa);
   border-color: rgba(255, 255, 255, 0.16);
-  color: #081024;
+  color: #11111b;
 }
 
 .btn--primary:hover {
-  background: linear-gradient(135deg, rgba(121, 166, 255, 1), rgba(163, 123, 255, 1));
+  background: linear-gradient(135deg, #d4b5ff, #9fc5ff);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(203, 166, 247, 0.35);
 }
 
 .btn--ghost {

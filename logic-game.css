@@ -1,14 +1,157 @@
-/* Logic Puzzle Game - Truth Tables
-   Color coding: operators, values, drop zones, feedback */
+/* ================================================================
+   logic-game.css — Logic Puzzle Game: Truth Tables
+   Aesthetic: Catppuccin Mocha · Glassmorphism (matches index.html)
+   ================================================================ */
 
-.logic-game-main {
-  padding-top: 1rem;
-  padding-bottom: 2rem;
+/* ── Scrollbar (matches index) ──────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #45475a; border-radius: 3px; }
+
+/* ── Sticky navbar ──────────────────────────────────────────────── */
+.game-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(24, 24, 37, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(180, 190, 254, 0.08);
+}
+.game-navbar__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.game-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+.game-navbar__mark {
+  color: var(--primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.game-navbar__title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  line-height: 1.2;
+}
+.game-navbar__subtitle {
+  font-size: 0.68rem;
+  color: var(--muted-2);
+}
+.game-navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.game-navbar__link {
+  font-size: 0.84rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.game-navbar__link:hover {
+  color: var(--text);
+  background: rgba(180, 190, 254, 0.06);
+}
+.game-navbar__link--active {
+  color: var(--primary);
+  border-color: rgba(203, 166, 247, 0.28);
+  background: rgba(203, 166, 247, 0.08);
 }
 
+/* ── Main layout ────────────────────────────────────────────────── */
+.game-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Glass cards (overrides styles.css .card) ───────────────────── */
+.card {
+  background: rgba(49, 50, 68, 0.55) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(180, 190, 254, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+}
+.card:hover {
+  background: rgba(49, 50, 68, 0.68) !important;
+  border-color: rgba(203, 166, 247, 0.18) !important;
+}
+
+/* ── Game cards ─────────────────────────────────────────────────── */
 .logic-game-card {
-  margin-top: 14px;
   padding: 18px 20px;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.game-footer {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(180, 190, 254, 0.08);
+}
+.game-footer__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 0.8rem;
+  color: var(--muted-2);
+}
+.game-footer__brand {
+  color: var(--primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+.game-footer__sep { opacity: 0.35; }
+.game-footer__text { color: var(--muted-2); }
+.game-footer__links {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+}
+.game-footer__links a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(180, 190, 254, 0.25);
+  transition: color 0.2s, border-color 0.2s;
+}
+.game-footer__links a:hover {
+  color: var(--text);
+  border-bottom-color: rgba(180, 190, 254, 0.5);
+}
+
+/* ── Responsive: navbar ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .game-navbar__inner { padding: 8px 14px; }
+  .game-navbar__brand { flex: 1 1 100%; }
+  .game-navbar__nav   { width: 100%; }
+  .game-navbar__subtitle { display: none; }
+  .game-footer__links { margin-left: 0; }
 }
 
 /* Instructions */

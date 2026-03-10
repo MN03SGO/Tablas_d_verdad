@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tablas de verdad</title>
+    <title>Logic Engine — Tablas de Verdad</title>
     <meta name="description" content="Juego interactivo de tablas de verdad: completa con bloques arrastrables y clasifica proposiciones." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./theme.css" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./logic-game.css" />
@@ -15,41 +15,46 @@
   </head>
   <body>
     <div class="bg" aria-hidden="true"></div>
-    <header class="container header">
-      <div class="brand">
-        <div class="brand__mark" aria-hidden="true">⊻</div>
-        <div class="brand__text">
-          <div class="brand__title">Tablas de verdad</div>
-          <div class="brand__subtitle">Arrastra y suelta · Clasificación</div>
-        </div>
-      </div>
-      <nav class="nav">
-        <div class="game-score" aria-live="polite">
-          <span class="game-score__label">Puntos</span>
-          <span class="game-score__value" id="game-score">0</span>
-        </div>
-        <div class="game-level-badge" aria-live="polite">
-          Nivel <span id="game-level-num">1</span> / <span id="game-level-total">—</span>
-        </div>
-        <div class="game-progress-badge" aria-label="Progreso" aria-live="polite">
-          <div class="game-progress-badge__bar">
-            <div class="game-progress-badge__fill" id="progress-fill" style="width: 0%"></div>
+
+    <header class="game-navbar">
+      <div class="game-navbar__inner">
+        <!-- Brand -->
+        <a href="./index.html" class="game-navbar__brand" style="text-decoration:none;">
+          <span class="game-navbar__mark">⊻</span>
+          <div>
+            <div class="game-navbar__title">Logic Engine</div>
+            <div class="game-navbar__subtitle">Tablas de Verdad</div>
           </div>
-          <span class="game-progress-badge__text" id="progress-text">0 completados</span>
-        </div>
-        <a class="btn btn--ghost" href="./index.html">Inicio</a>
-        <a class="btn btn--primary" href="./logic-game.html" aria-current="page">Tablas de verdad</a>
-      </nav>
+        </a>
+        <!-- Game stats + nav links -->
+        <nav class="game-navbar__nav">
+          <div class="game-score" aria-live="polite">
+            <span class="game-score__label">Puntos</span>
+            <span class="game-score__value" id="game-score">0</span>
+          </div>
+          <div class="game-level-badge" aria-live="polite">
+            Nivel <span id="game-level-num">—</span> / <span id="game-level-total">—</span>
+          </div>
+          <div class="game-progress-badge" aria-label="Progreso" aria-live="polite">
+            <div class="game-progress-badge__bar">
+              <div class="game-progress-badge__fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <span class="game-progress-badge__text" id="progress-text">0 completados</span>
+          </div>
+          <a class="game-navbar__link" href="./index.html">Inicio</a>
+          <a class="game-navbar__link game-navbar__link--active" href="./logic-game.html" aria-current="page">Tablas de verdad</a>
+        </nav>
+      </div>
     </header>
 
-    <main class="container logic-game-main">
+    <main class="game-main">
       <!-- Instrucciones y tutorial -->
       <section class="card logic-game-card reveal is-visible" aria-label="Instrucciones"
                data-collapsible data-open="false"
                data-collapsible-class="logic-instructions-panel--closed">
         <button type="button" class="logic-instructions-toggle" id="instructions-toggle"
                 data-collapsible-trigger aria-expanded="false" aria-controls="instructions-panel">
-          <span class="logic-instructions-toggle__title">📖 Instrucciones y tutorial</span>
+          <span class="logic-instructions-toggle__title">Instrucciones y tutorial</span>
           <span class="logic-instructions-toggle__icon" aria-hidden="true">+</span>
         </button>
         <div class="logic-instructions-panel logic-instructions-panel--closed" id="instructions-panel"
@@ -131,14 +136,15 @@
       </section>
     </main>
 
-    <footer class="container footer">
-      <div class="footer__left">
-        <div class="footer__title">Tablas de verdad</div>
-        <div class="footer__text" id="footer-meta">Tablas de verdad · Equivalencias lógicas</div>
-      </div>
-      <div class="footer__right">
-        <a class="footer__link" href="./index.html">Inicio</a>
-        <a class="footer__link" href="./logic-game.html">Tablas de verdad</a>
+    <footer class="game-footer">
+      <div class="game-footer__inner">
+        <span class="game-footer__brand">⊻ Logic Engine</span>
+        <span class="game-footer__sep">·</span>
+        <span class="game-footer__text">Tablas de Verdad · Lógica Proposicional</span>
+        <nav class="game-footer__links">
+          <a href="./index.html">Inicio</a>
+          <a href="./logic-game.html">Tablas de verdad</a>
+        </nav>
       </div>
     </footer>
 
