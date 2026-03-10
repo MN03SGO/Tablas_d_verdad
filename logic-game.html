@@ -167,7 +167,8 @@
           var out = [];
           for (var i = 0; i < len; i++) {
             var row = {};
-            for (var v = 0; v < n; v++) row[vars[v]] = ((i >> (n - 1 - v)) & 1) === 1;
+            var bits = len - 1 - i;
+            for (var v = 0; v < n; v++) row[vars[v]] = ((bits >> (n - 1 - v)) & 1) === 1;
             out.push(row);
           }
           return out;

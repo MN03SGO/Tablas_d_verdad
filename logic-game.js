@@ -21,15 +21,16 @@
     return b ? "V" : "F";
   }
 
-  /** Get 2^n rows for n variables (p, q, r, ...) */
+  /** Get 2^n rows for n variables (p, q, r, ...) — V first (V,V … F,F) */
   function getRows(n) {
     const vars = ["p", "q", "r", "s"].slice(0, n);
     const len = Math.pow(2, n);
     const out = [];
     for (let i = 0; i < len; i++) {
       const row = {};
+      const bits = len - 1 - i;
       vars.forEach((v, j) => {
-        row[v] = ((i >> (n - 1 - j)) & 1) === 1;
+        row[v] = ((bits >> (n - 1 - j)) & 1) === 1;
       });
       out.push(row);
     }
