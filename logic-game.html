@@ -213,7 +213,7 @@
             tbody.innerHTML = rows.map(function(r, idx) {
               return "<tr><td>" + (idx+1) + "</td>" +
                 varsl.map(function(v){ return "<td>" + vf(r[v]) + "</td>"; }).join("") +
-                '<td class="logic-drop-cell" data-result-cell="true" data-row-idx="' + idx + '" data-value="" droppable="true">—</td></tr>';
+                '<td class="logic-drop-cell" data-result-cell="true" data-row-idx="' + idx + '" data-value="" droppable="true"></td></tr>';
             }).join("");
           }
           if (status) status.textContent = "Arrastra V o F a cada celda de resultado y pulsa Validar.";
@@ -299,7 +299,6 @@
             td.setAttribute("data-row-idx", idx);
             td.setAttribute("data-value", "");
             td.setAttribute("droppable", "true");
-            td.textContent = "—";
             tr.insertBefore(td, lastTd);
           });
         }
